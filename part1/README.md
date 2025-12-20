@@ -39,7 +39,7 @@ The application follows a three-layer architecture to ensure separation of conce
 This design improves maintainability, scalability, and clarity.
 
 ### 📐 UML Package Diagram
-<img width="366" height="353" alt="image" src="https://github.com/user-attachments/assets/73237c23-a736-41f3-8d83-d72c95d216cf" />
+<img width="430" height="576" alt="image" src="https://github.com/user-attachments/assets/5f323c18-3f3c-49c0-878e-e0f3dea2b418" />
 
 
 ---
@@ -99,7 +99,7 @@ This class diagram illustrates:
 - **Place** and **Amenity** have a many-to-many relationship
 
 ### 📐 UML Class Diagram
-<img width="524" height="502" alt="image" src="https://github.com/user-attachments/assets/38056a1e-93f1-487d-a21d-b9e3c3e6eaf8" />
+<img width="424" height="408" alt="image" src="https://github.com/user-attachments/assets/87c840f0-024a-44c4-9624-009fc622458b" />
 
 ---
 
@@ -117,7 +117,7 @@ This sequence shows how a new user is registered:
 5. Success response is returned
 
 #### 📐 Sequence Diagram
-<img width="525" height="496" alt="image" src="https://github.com/user-attachments/assets/fc35b927-7100-4c6b-bfc7-861469547377" />
+<img width="432" height="409" alt="image" src="https://github.com/user-attachments/assets/1fbca412-52e0-4b36-be36-3f38cc0426c7" />
 
 ---
 
@@ -130,7 +130,7 @@ This sequence demonstrates how a user creates a new place:
 4. Confirmation is returned
 
 #### 📐 Sequence Diagram
-<img width="525" height="496" alt="image" src="https://github.com/user-attachments/assets/4cef88bc-9b3e-42a1-b800-53cb300f4718" />
+<img width="434" height="401" alt="image" src="https://github.com/user-attachments/assets/0979af24-ca1a-48d0-99ac-99aa25aacb96" />
 
 ---
 
@@ -143,7 +143,7 @@ This sequence illustrates how a user submits a review:
 4. Response confirms submission
 
 #### 📐 Sequence Diagram
-<img width="525" height="453" alt="image" src="https://github.com/user-attachments/assets/d96413b3-f0eb-40f2-888e-616eb61079ee" />
+<img width="432" height="421" alt="image" src="https://github.com/user-attachments/assets/f3fafdb6-a19e-4453-accf-8df2f4100c46" />
 
 ---
 
@@ -156,19 +156,6 @@ This sequence shows how a list of places is retrieved:
 4. API sends the list to the client
 
 #### 📐 Sequence Diagram
-<img width="525" height="453" alt="image" src="https://github.com/user-attachments/assets/695209b6-89eb-4bd2-bd68-7154c67d166d" />
+<img width="439" height="398" alt="image" src="https://github.com/user-attachments/assets/1ce47b6d-386d-4aa8-8de7-fa52650e27d5" />
 
----
 
-## 📂 Repository Structure
-```text
-holbertonschool-hbnb/
-└── part1/
-    ├── README.md
-    └── diagrams/
-        ├── package_diagram.png
-        ├── class_diagram.png
-        ├── sequence_user_registration.png
-        ├── sequence_place_creation.png
-        ├── sequence_review_submission.png
-        └── sequence_list_places.png
