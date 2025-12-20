@@ -39,7 +39,8 @@ The application follows a three-layer architecture to ensure separation of conce
 This design improves maintainability, scalability, and clarity.
 
 ### 📐 UML Package Diagram
-![High-Level Package Diagram](diagrams/package_diagram.png)
+<img width="366" height="353" alt="image" src="https://github.com/user-attachments/assets/73237c23-a736-41f3-8d83-d72c95d216cf" />
+
 
 ---
 
@@ -98,7 +99,7 @@ This class diagram illustrates:
 - **Place** and **Amenity** have a many-to-many relationship
 
 ### 📐 UML Class Diagram
-![Business Logic Class Diagram](diagrams/class_diagram.png)
+<img width="524" height="502" alt="image" src="https://github.com/user-attachments/assets/38056a1e-93f1-487d-a21d-b9e3c3e6eaf8" />
 
 ---
 
@@ -116,7 +117,7 @@ This sequence shows how a new user is registered:
 5. Success response is returned
 
 #### 📐 Sequence Diagram
-![User Registration Sequence](diagrams/sequence_user_registration.png)
+<img width="525" height="496" alt="image" src="https://github.com/user-attachments/assets/fc35b927-7100-4c6b-bfc7-861469547377" />
 
 ---
 
@@ -129,7 +130,7 @@ This sequence demonstrates how a user creates a new place:
 4. Confirmation is returned
 
 #### 📐 Sequence Diagram
-![Place Creation Sequence](diagrams/sequence_place_creation.png)
+<img width="525" height="496" alt="image" src="https://github.com/user-attachments/assets/4cef88bc-9b3e-42a1-b800-53cb300f4718" />
 
 ---
 
@@ -142,7 +143,7 @@ This sequence illustrates how a user submits a review:
 4. Response confirms submission
 
 #### 📐 Sequence Diagram
-![Review Submission Sequence](diagrams/sequence_review_submission.png)
+<img width="525" height="453" alt="image" src="https://github.com/user-attachments/assets/d96413b3-f0eb-40f2-888e-616eb61079ee" />
 
 ---
 
@@ -155,7 +156,7 @@ This sequence shows how a list of places is retrieved:
 4. API sends the list to the client
 
 #### 📐 Sequence Diagram
-![List Places Sequence](diagrams/sequence_list_places.png)
+<img width="525" height="453" alt="image" src="https://github.com/user-attachments/assets/695209b6-89eb-4bd2-bd68-7154c67d166d" />
 
 ---
 
