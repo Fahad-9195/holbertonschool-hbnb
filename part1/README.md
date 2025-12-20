@@ -24,14 +24,14 @@ The goal of this phase is to:
 ## 🧱 System Architecture (Layered Design)
 
 ### 📖 Explanation
-The application follows a **three-layer architecture** to ensure separation of concerns:
+The application follows a three-layer architecture to ensure separation of concerns:
 
 - **Presentation Layer**  
   Handles API endpoints and client requests.
 
 - **Business Logic Layer**  
   Contains domain models and business rules.  
-  A **Facade pattern** is used to simplify communication with the Presentation layer.
+  A **Facade** pattern is used to simplify communication with the Presentation layer.
 
 - **Persistence Layer**  
   Responsible for storing and retrieving data from the database (implemented in later phases).
@@ -47,8 +47,7 @@ This design improves maintainability, scalability, and clarity.
 
 ### 👤 User Entity
 #### 📖 Explanation
-Represents application users.  
-Users can be regular users or administrators and are able to manage their profiles.
+Represents application users. Users can be regular users or administrators and are able to manage their profiles.
 
 **Key Responsibilities:**
 - Register
@@ -57,19 +56,14 @@ Users can be regular users or administrators and are able to manage their profil
 - Own places
 - Write reviews
 
----
-
 ### 🏠 Place Entity
 #### 📖 Explanation
-Represents properties listed by users.  
-Each place belongs to one user and can include multiple amenities.
+Represents properties listed by users. Each place belongs to one user and can include multiple amenities.
 
 **Key Responsibilities:**
 - Create, update, delete places
 - Associate amenities
 - Receive reviews
-
----
 
 ### ⭐ Review Entity
 #### 📖 Explanation
@@ -78,8 +72,6 @@ Represents feedback provided by users on places they have visited.
 **Key Responsibilities:**
 - Create, update, delete reviews
 - Link users with places
-
----
 
 ### 🛎️ Amenity Entity
 #### 📖 Explanation
@@ -95,15 +87,15 @@ Represents features that can be associated with places (e.g., Wi-Fi, Parking).
 
 ### 📖 Explanation
 This class diagram illustrates:
-- Core entities (`User`, `Place`, `Review`, `Amenity`)
+- Core entities (**User**, **Place**, **Review**, **Amenity**)
 - Their attributes and methods
 - Relationships between entities
 
 **Relationship Summary:**
-- One `User` owns many `Place`
-- One `User` writes many `Review`
-- One `Place` has many `Review`
-- `Place` and `Amenity` have a many-to-many relationship
+- One **User** owns many **Place**
+- One **User** writes many **Review**
+- One **Place** has many **Review**
+- **Place** and **Amenity** have a many-to-many relationship
 
 ### 📐 UML Class Diagram
 ![Business Logic Class Diagram](diagrams/class_diagram.png)
@@ -111,14 +103,10 @@ This class diagram illustrates:
 ---
 
 ## 🔄 Sequence Diagrams (API Interactions)
-
-Sequence diagrams show how requests move across the system:
+Sequence diagrams show how requests move across the system:  
 **Client → Presentation → Business Logic → Persistence**
 
----
-
 ### 👤 User Registration
-
 #### 📖 Explanation
 This sequence shows how a new user is registered:
 1. Client sends registration request
@@ -133,7 +121,6 @@ This sequence shows how a new user is registered:
 ---
 
 ### 🏠 Place Creation
-
 #### 📖 Explanation
 This sequence demonstrates how a user creates a new place:
 1. Authenticated user sends create request
@@ -147,7 +134,6 @@ This sequence demonstrates how a user creates a new place:
 ---
 
 ### ⭐ Review Submission
-
 #### 📖 Explanation
 This sequence illustrates how a user submits a review:
 1. User sends review request
@@ -161,7 +147,6 @@ This sequence illustrates how a user submits a review:
 ---
 
 ### 📋 List Places
-
 #### 📖 Explanation
 This sequence shows how a list of places is retrieved:
 1. Client requests list of places
@@ -175,4 +160,14 @@ This sequence shows how a list of places is retrieved:
 ---
 
 ## 📂 Repository Structure
-
+```text
+holbertonschool-hbnb/
+└── part1/
+    ├── README.md
+    └── diagrams/
+        ├── package_diagram.png
+        ├── class_diagram.png
+        ├── sequence_user_registration.png
+        ├── sequence_place_creation.png
+        ├── sequence_review_submission.png
+        └── sequence_list_places.png
