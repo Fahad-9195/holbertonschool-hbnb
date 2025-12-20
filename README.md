@@ -175,3 +175,4 @@ This sequence shows how a list of places is retrieved:
 ---
 
 ## 📂 Repository Structure
+
