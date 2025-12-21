@@ -1,6 +1,26 @@
-### 📐 UML Package Diagram
+## 📐 High-Level Package Diagram
 
-<img width="430" height="576" alt="High-Level Package Diagram" src="https://github.com/user-attachments/assets/5f323c18-3f3c-49c0-878e-e0f3dea2b418" />
+classDiagram
+direction TB
 
-📖 **Explanation**  
-This diagram illustrates the three-layer architecture of the HBnB application and the use of the Facade pattern as the communication interface between layers.
+class "Presentation Layer\n(API / Services)" as PL {
+  +API Endpoints / Controllers
+  +Application Services
+}
+
+class "Business Logic Layer\n(Core Models)" as BL {
+  +HBnBFacade <<Facade>>
+  +User
+  +Place
+  +Review
+  +Amenity
+  +Business Rules / Validation
+}
+
+class "Persistence Layer\n(Data Access)" as DAL {
+  +Repositories / DAOs
+  +Database
+}
+
+PL --> BL : calls Facade
+BL --> DAL : data operations
