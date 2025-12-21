@@ -1,29 +1,3 @@
 ## 📐 High-Level Package Diagram
 
-```mermaid
-classDiagram
-direction TB
-
-class "Presentation Layer (API Services)" as PL {
-  APIEndpoints
-  Controllers
-  ApplicationServices
-}
-
-class "Business Logic Layer (Core Models)" as BL {
-  HBnBFacade <<Facade>>
-  User
-  Place
-  Review
-  Amenity
-  BusinessRules
-}
-
-class "Persistence Layer (Data Access)" as DAL {
-  Repositories
-  DAOs
-  Database
-}
-
-PL --> BL : uses Facade
-BL --> DAL : data operations
+<img width="430" height="576" alt="528899069-5f323c18-3f3c-49c0-878e-e0f3dea2b418" src="https://github.com/user-attachments/assets/c1792396-b0eb-41ff-8cce-531bb321b3ac" />
