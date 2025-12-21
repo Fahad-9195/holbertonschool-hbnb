@@ -1,5 +1,4 @@
-## 📐 High-Level Package Diagram
-
+```mermaid
 classDiagram
 direction TB
 
