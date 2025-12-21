@@ -1,2 +1,6 @@
 ### 📐 UML Package Diagram
-<img width="430" height="576" alt="image" src="https://github.com/user-attachments/assets/5f323c18-3f3c-49c0-878e-e0f3dea2b418" />
+
+<img width="430" height="576" alt="High-Level Package Diagram" src="https://github.com/user-attachments/assets/5f323c18-3f3c-49c0-878e-e0f3dea2b418" />
+
+📖 **Explanation**  
+This diagram illustrates the three-layer architecture of the HBnB application and the use of the Facade pattern as the communication interface between layers.
