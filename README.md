@@ -1,161 +1,163 @@
-# 🏠 HBnB Evolution — UML Technical Documentation (Part 1)
+# holbertonschool-hbnb
 
-## 📌 Project Overview
-HBnB Evolution is a simplified AirBnB-like application.  
-This phase focuses on **technical documentation only**, providing a complete UML-based blueprint to guide the implementation in later parts of the project.
+HBnB Evolution is a simplified AirBnB-like application built using a layered architecture (Presentation → Business Logic → Persistence) and a Facade pattern to unify access to core use-cases.
 
-The application supports:
-- User management
-- Place listing and ownership
-- Reviews
-- Amenities association
+This repository contains the technical documentation for **Part 1** (UML design) and will later include the implementation parts.
 
 ---
 
-## 🎯 Project Objectives
-The goal of this phase is to:
-- Design a clear layered architecture
-- Model the business logic using UML
-- Visualize interactions between system components
-- Prepare a solid foundation for development
+## Project Structure
 
----
+```text
+holbertonschool-hbnb/
+└── part1/
+    ├── README.md
+    └── diagrams/
+        ├── 0_package_diagram.png
+        ├── 1_class_diagram.png
+        ├── 2_1_user_registration.png
+        ├── 2_2_place_creation.png
+        ├── 2_3_review_submission.png
+        └── 2_4_fetch_places.png
+```
+## Part 1: Technical Documentation (UML)
+Objectives
 
-## 🧱 System Architecture (Layered Design)
+Design the high-level architecture (3-layer system).
 
-### 📖 Explanation
-The application follows a three-layer architecture to ensure separation of concerns:
+Define the Business Logic classes (User, Place, Review, Amenity).
 
-- **Presentation Layer**  
-  Handles API endpoints and client requests.
+Show sequence diagrams for key API calls.
 
-- **Business Logic Layer**  
-  Contains domain models and business rules.  
-  A **Facade** pattern is used to simplify communication with the Presentation layer.
+Compile all into a clear documentation guide for implementation.
 
-- **Persistence Layer**  
-  Responsible for storing and retrieving data from the database (implemented in later phases).
+## 0. High-Level Package Diagram
 
-This design improves maintainability, scalability, and clarity.
+Goal: Illustrate the three-layer architecture and how layers communicate via the Facade pattern.
 
-### 📐 UML Package Diagram
-<img width="430" height="576" alt="image" src="https://github.com/user-attachments/assets/5f323c18-3f3c-49c0-878e-e0f3dea2b418" />
-
-
----
-
-## 🧠 Business Logic — Core Entities
-
-### 👤 User Entity
-#### 📖 Explanation
-Represents application users. Users can be regular users or administrators and are able to manage their profiles.
-
-**Key Responsibilities:**
-- Register
-- Update profile
-- Delete account
-- Own places
-- Write reviews
-
-### 🏠 Place Entity
-#### 📖 Explanation
-Represents properties listed by users. Each place belongs to one user and can include multiple amenities.
-
-**Key Responsibilities:**
-- Create, update, delete places
-- Associate amenities
-- Receive reviews
-
-### ⭐ Review Entity
-#### 📖 Explanation
-Represents feedback provided by users on places they have visited.
-
-**Key Responsibilities:**
-- Create, update, delete reviews
-- Link users with places
-
-### 🛎️ Amenity Entity
-#### 📖 Explanation
-Represents features that can be associated with places (e.g., Wi-Fi, Parking).
-
-**Key Responsibilities:**
-- Create, update, delete amenities
-- Associate with places
-
----
-
-## 🧩 Business Logic Class Diagram
-
-### 📖 Explanation
-This class diagram illustrates:
-- Core entities (**User**, **Place**, **Review**, **Amenity**)
-- Their attributes and methods
-- Relationships between entities
-
-**Relationship Summary:**
-- One **User** owns many **Place**
-- One **User** writes many **Review**
-- One **Place** has many **Review**
-- **Place** and **Amenity** have a many-to-many relationship
-
-### 📐 UML Class Diagram
-<img width="424" height="408" alt="image" src="https://github.com/user-attachments/assets/87c840f0-024a-44c4-9624-009fc622458b" />
-
----
-
-## 🔄 Sequence Diagrams (API Interactions)
-Sequence diagrams show how requests move across the system:  
-**Client → Presentation → Business Logic → Persistence**
-
-### 👤 User Registration
-#### 📖 Explanation
-This sequence shows how a new user is registered:
-1. Client sends registration request
-2. API validates input
-3. Business Logic creates the user
-4. Persistence layer stores the user
-5. Success response is returned
-
-#### 📐 Sequence Diagram
-<img width="432" height="409" alt="image" src="https://github.com/user-attachments/assets/1fbca412-52e0-4b36-be36-3f38cc0426c7" />
-
----
-
-### 🏠 Place Creation
-#### 📖 Explanation
-This sequence demonstrates how a user creates a new place:
-1. Authenticated user sends create request
-2. Ownership and data are validated
-3. Place is stored in persistence
-4. Confirmation is returned
-
-#### 📐 Sequence Diagram
-<img width="434" height="401" alt="image" src="https://github.com/user-attachments/assets/0979af24-ca1a-48d0-99ac-99aa25aacb96" />
-
----
-
-### ⭐ Review Submission
-#### 📖 Explanation
-This sequence illustrates how a user submits a review:
-1. User sends review request
-2. System validates user and place
-3. Review is created and saved
-4. Response confirms submission
-
-#### 📐 Sequence Diagram
-<img width="432" height="421" alt="image" src="https://github.com/user-attachments/assets/f3fafdb6-a19e-4453-accf-8df2f4100c46" />
-
----
-
-### 📋 List Places
-#### 📖 Explanation
-This sequence shows how a list of places is retrieved:
-1. Client requests list of places
-2. Business Logic fetches data
-3. Persistence returns stored places
-4. API sends the list to the client
-
-#### 📐 Sequence Diagram
-<img width="439" height="398" alt="image" src="https://github.com/user-attachments/assets/1ce47b6d-386d-4aa8-8de7-fa52650e27d5" />
+Diagram:
 
 
+Notes:
+
+Presentation Layer: API endpoints, DTO validation, request/response handling.
+
+Business Logic Layer: domain models + rules + HBnBFacade.
+
+Persistence Layer: repositories/DAO + database operations (implemented in Part 3).
+
+The Facade provides a single interface to use-cases and reduces coupling.
+
+## 1. Detailed Class Diagram (Business Logic Layer)
+
+Goal: Model the core entities, attributes, methods, and relationships.
+
+Diagram:
+
+
+Key Concepts:
+
+Every entity has:
+
+id (UUID4)
+
+created_at
+
+updated_at
+
+Relationships:
+
+User owns many Place
+
+User writes many Review
+
+Place has many Review
+
+Place includes many Amenity (many-to-many)
+
+## 2. Sequence Diagrams (API Calls)
+
+These diagrams show the flow across:
+Client → Presentation → HBnBFacade → Persistence → Database
+
+2.1 User Registration — POST /users
+
+Flow Summary:
+
+Validate request DTO.
+
+Check email uniqueness.
+
+Hash password and create user.
+
+Save user and return 201 Created.
+
+If email exists → 409 Conflict.
+
+2.2 Place Creation — POST /places
+
+Flow Summary:
+
+Validate request DTO.
+
+Verify owner exists.
+
+Validate place fields (price, lat, long).
+
+Validate amenities (optional).
+
+Save place + link amenities → 201 Created.
+
+Invalid owner → 404 Not Found.
+
+2.3 Review Submission — POST /places/{id}/reviews
+
+Flow Summary:
+
+Validate request DTO.
+
+Verify user exists.
+
+Verify place exists.
+
+Validate rating (1..5).
+
+Save review → 201 Created.
+
+Invalid rating → 400 Bad Request.
+
+Place not found → 404 Not Found.
+
+2.4 Fetching a List of Places — GET /places
+
+Flow Summary:
+
+Parse and validate query filters.
+
+Facade validates filters.
+
+Repository performs search.
+
+Return 200 OK with list.
+
+Bad filters → 400 Bad Request.
+
+Implementation Notes (Next Parts)
+
+## Part 2 will implement the core logic and API endpoints.
+
+Part 3 will add database persistence and repositories.
+
+Requirements
+
+Use UML notation for diagrams.
+
+Ensure separation of concerns between layers.
+
+Follow clean architecture style:
+
+Controllers are thin
+
+Business rules live in domain layer
+
+Persistence is accessed via repositories
