@@ -1,3 +1,4 @@
+nohup: ignoring input
  * Serving Flask app 'app'
  * Debug mode: off
 [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
@@ -5,4 +6,21 @@
  * Running on http://127.0.0.1:5000
  * Running on http://10.42.145.131:5000
 [33mPress CTRL+C to quit[0m
-127.0.0.1 - - [04/Jan/2026 16:16:51] "GET / HTTP/1.1" 200 -
+[2026-01-04 16:30:16,314] ERROR in app: Exception on /api/v1/amenities/ [POST]
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/dist-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.10/dist-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/usr/local/lib/python3.10/dist-packages/flask_restx/api.py", line 404, in wrapper
+    resp = resource(*args, **kwargs)
+  File "/usr/local/lib/python3.10/dist-packages/flask/views.py", line 110, in view
+    return current_app.ensure_sync(self.dispatch_request)(**kwargs)  # type: ignore[no-any-return]
+  File "/usr/local/lib/python3.10/dist-packages/flask_restx/resource.py", line 41, in dispatch_request
+    resp = meth(*args, **kwargs)
+  File "/usr/local/lib/python3.10/dist-packages/flask_restx/marshalling.py", line 246, in wrapper
+    resp = f(*args, **kwargs)
+  File "/root/holbertonschool-hbnb/part2/app/presentation/api/v1/amenities.py", line 26, in post
+    return facade.create_amenity(api.payload), 201
+AttributeError: 'HBnBFacade' object has no attribute 'create_amenity'
+127.0.0.1 - - [04/Jan/2026 16:30:16] "[35m[1mPOST /api/v1/amenities/ HTTP/1.1[0m" 500 -

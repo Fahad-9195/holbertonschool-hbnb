@@ -38,3 +38,18 @@ class HBnBFacade:
 
         user.update(data)  # validation داخل الكلاس
         return user
+
+    # ---------- Amenities ----------
+    def update_amenity(self, amenity_id: str, data: dict):
+        amenity = self.repo.get("amenities", amenity_id)
+
+        # name unique لو انرسل
+        if "name" in data and str(data["name"]).strip():
+            new_name = data["name"].strip()
+            for other in self.repo.list("amenities"):
+                if other.id != amenity_id and getattr(other, "name", None) == new_name:
+                    from app.common.exceptions import ConflictError
+                    raise ConflictError("amenities.name must be unique")
+
+        amenity.update(data)
+        return amenity
