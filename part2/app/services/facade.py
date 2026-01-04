@@ -1,7 +1,8 @@
 from app.persistence.repository import InMemoryRepository
 from app.business_logic.user import User
 from app.business_logic.amenity import Amenity
-from app.common.exceptions import ValidationError, ConflictError
+from app.business_logic.place import Place
+from app.common.exceptions import ValidationError, ConflictError, NotFoundError
 
 class HBnBFacade:
     def __init__(self, repo=None):
@@ -63,3 +64,81 @@ class HBnBFacade:
 
         amenity.update(data)
         return amenity
+
+    # ---------- Places ----------
+    def _place_out(self, place: Place):
+        """Return place with owner + amenities expanded (no reviews in this task)."""
+        p = place.to_dict()
+
+        owner = self.get_user(p["owner_id"])
+        p["owner"] = {
+            "id": owner.id,
+            "first_name": owner.first_name,
+            "last_name": owner.last_name
+        }
+
+        amenities = []
+        for aid in p.get("amenity_ids", []):
+            a = self.get_amenity(aid)
+            amenities.append(a.to_dict())
+        p["amenities"] = amenities
+
+        return p
+
+    def create_place(self, data: dict):
+        # required fields
+        required = ("name", "description", "price", "latitude", "longitude", "owner_id")
+        for f in required:
+            if f not in data:
+                raise ValidationError(f"Missing field: {f}")
+
+        # owner must exist
+        self.get_user(data["owner_id"])
+
+        place = Place(
+            name=data["name"],
+            description=data["description"],
+            price=data["price"],
+            latitude=data["latitude"],
+            longitude=data["longitude"],
+            owner_id=data["owner_id"]
+        )
+
+        # amenities (optional)
+        amenity_ids = data.get("amenity_ids") or []
+        if not isinstance(amenity_ids, list):
+            raise ValidationError("amenity_ids must be a list")
+
+        for aid in amenity_ids:
+            self.get_amenity(aid)     # must exist
+            place.add_amenity(aid)    # dedupe handled inside
+
+        place = self.repo.add("places", place)
+        return self._place_out(place)
+
+    def list_places(self):
+        return [self._place_out(p) for p in self.repo.list("places")]
+
+    def get_place(self, place_id: str):
+        place = self.repo.get("places", place_id)
+        return self._place_out(place)
+
+    def update_place(self, place_id: str, data: dict):
+        place = self.repo.get("places", place_id)
+
+        # allow updating basic fields (validation inside Place.update)
+        place.update(data)
+
+        # allow updating amenities list (optional)
+        if "amenity_ids" in data:
+            amenity_ids = data.get("amenity_ids") or []
+            if not isinstance(amenity_ids, list):
+                raise ValidationError("amenity_ids must be a list")
+
+            # reset then re-add (simple behavior)
+            place.amenity_ids = []
+            for aid in amenity_ids:
+                self.get_amenity(aid)
+                place.add_amenity(aid)
+
+        return self._place_out(place)
