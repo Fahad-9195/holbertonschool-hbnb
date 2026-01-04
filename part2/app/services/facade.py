@@ -1,5 +1,6 @@
 from app.persistence.repository import InMemoryRepository
 from app.business_logic.user import User
+from app.business_logic.amenity import Amenity
 from app.common.exceptions import ValidationError, ConflictError
 
 class HBnBFacade:
@@ -17,7 +18,6 @@ class HBnBFacade:
             last_name=data["last_name"].strip(),
             email=data["email"].strip(),
         )
-
         return self.repo.add("users", user, unique_fields=["email"])
 
     def list_users(self):
@@ -29,26 +29,36 @@ class HBnBFacade:
     def update_user(self, user_id: str, data: dict):
         user = self.repo.get("users", user_id)
 
-        # تحقق email unique لو انرسل
         if "email" in data and str(data["email"]).strip():
             new_email = data["email"].strip()
             for other in self.repo.list("users"):
                 if other.id != user_id and getattr(other, "email", None) == new_email:
                     raise ConflictError("users.email must be unique")
 
-        user.update(data)  # validation داخل الكلاس
+        user.update(data)
         return user
 
     # ---------- Amenities ----------
+    def create_amenity(self, data: dict):
+        if "name" not in data or not str(data["name"]).strip():
+            raise ValidationError("Missing field: name")
+
+        amenity = Amenity(name=data["name"].strip())
+        return self.repo.add("amenities", amenity, unique_fields=["name"])
+
+    def list_amenities(self):
+        return self.repo.list("amenities")
+
+    def get_amenity(self, amenity_id: str):
+        return self.repo.get("amenities", amenity_id)
+
     def update_amenity(self, amenity_id: str, data: dict):
         amenity = self.repo.get("amenities", amenity_id)
 
-        # name unique لو انرسل
         if "name" in data and str(data["name"]).strip():
             new_name = data["name"].strip()
             for other in self.repo.list("amenities"):
                 if other.id != amenity_id and getattr(other, "name", None) == new_name:
-                    from app.common.exceptions import ConflictError
                     raise ConflictError("amenities.name must be unique")
 
         amenity.update(data)
