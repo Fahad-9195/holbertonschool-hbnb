@@ -1,9 +1,8 @@
 from flask_restx import Namespace, Resource, fields
-from app.services import HBnBFacade
+from app.services import facade
 from app.common.exceptions import ValidationError, ConflictError, NotFoundError
 
 api = Namespace("amenities", description="Amenities operations")
-facade = HBnBFacade()
 
 amenity_in = api.model("AmenityIn", {
     "name": fields.String(required=True),

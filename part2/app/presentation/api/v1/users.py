@@ -1,9 +1,8 @@
 from flask_restx import Namespace, Resource, fields
-from app.services import HBnBFacade
+from app.services import facade
 from app.common.exceptions import ValidationError, ConflictError, NotFoundError
 
 api = Namespace("users", description="Users operations")
-facade = HBnBFacade()
 
 user_in = api.model("UserIn", {
     "first_name": fields.String(required=True),
