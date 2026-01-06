@@ -126,6 +126,10 @@ class HBnBFacade:
     def update_place(self, place_id: str, data: dict):
         place = self.repo.get("places", place_id)
 
+        # validate owner_id if being updated
+        if "owner_id" in data:
+            self.get_user(data["owner_id"])  # must exist
+
         # allow updating basic fields (validation inside Place.update)
         place.update(data)
 
