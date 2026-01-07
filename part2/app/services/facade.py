@@ -2,6 +2,7 @@ from app.persistence.repository import InMemoryRepository
 from app.business_logic.user import User
 from app.business_logic.amenity import Amenity
 from app.business_logic.place import Place
+from app.business_logic.review import Review
 from app.common.exceptions import ValidationError, ConflictError, NotFoundError
 
 class HBnBFacade:
@@ -146,3 +147,117 @@ class HBnBFacade:
                 place.add_amenity(aid)
 
         return self._place_out(place)
+
+    # ---------- Reviews ----------
+    def _review_out(self, review: Review):
+        """Return review with user and place info expanded."""
+        r = review.to_dict()
+
+        # Add user info
+        user = self.get_user(r["user_id"])
+        r["user"] = {
+            "id": user.id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+        }
+
+        # Add place info
+        place = self.get_place(r["place_id"])
+        r["place"] = {
+            "id": place["id"],
+            "name": place["name"],
+        }
+
+        return r
+
+    def create_review(self, data: dict):
+        # required fields
+        required = ("text", "rating", "user_id", "place_id")
+        for f in required:
+            if f not in data:
+                raise ValidationError(f"Missing field: {f}")
+
+        # user and place must exist
+        self.get_user(data["user_id"])
+        place = self.get_place(data["place_id"])
+
+        review = Review(
+            text=data["text"],
+            rating=data["rating"],
+            user_id=data["user_id"],
+            place_id=data["place_id"]
+        )
+
+        review = self.repo.add("reviews", review)
+
+        # Add review to place's review_ids
+        place_obj = self.repo.get("places", data["place_id"])
+        place_obj.add_review(review.id)
+
+        return self._review_out(review)
+
+    def list_reviews(self):
+        return [self._review_out(r) for r in self.repo.list("reviews")]
+
+    def get_review(self, review_id: str):
+        review = self.repo.get("reviews", review_id)
+        return self._review_out(review)
+
+    def update_review(self, review_id: str, data: dict):
+        review = self.repo.get("reviews", review_id)
+        old_place_id = review.place_id
+
+        # Validate user_id if being updated
+        if "user_id" in data:
+            self.get_user(data["user_id"])  # must exist
+
+        # Validate place_id if being updated and handle place relationship
+        if "place_id" in data:
+            new_place_id = data["place_id"]
+            self.get_place(new_place_id)  # must exist
+            
+            # Remove review from old place
+            if old_place_id != new_place_id:
+                try:
+                    old_place = self.repo.get("places", old_place_id)
+                    if review_id in old_place.review_ids:
+                        old_place.review_ids.remove(review_id)
+                        old_place.touch()
+                except NotFoundError:
+                    pass  # Old place might not exist
+                
+                # Add review to new place
+                new_place = self.repo.get("places", new_place_id)
+                new_place.add_review(review_id)
+
+        # Update review (validation inside Review.update)
+        review.update(data)
+
+        return self._review_out(review)
+
+    def delete_review(self, review_id: str):
+        review = self.repo.get("reviews", review_id)
+        place_id = review.place_id
+
+        # Remove review from place's review_ids
+        try:
+            place = self.repo.get("places", place_id)
+            if review_id in place.review_ids:
+                place.review_ids.remove(review_id)
+                place.touch()
+        except NotFoundError:
+            pass  # Place might not exist, continue with deletion
+
+        # Delete the review
+        self.repo.delete("reviews", review_id)
+        return {"message": "Review deleted successfully"}
+
+    def list_reviews_by_place(self, place_id: str):
+        # Verify place exists
+        self.get_place(place_id)
+        
+        # Get all reviews for this place
+        all_reviews = self.repo.list("reviews")
+        place_reviews = [r for r in all_reviews if r.place_id == place_id]
+        
+        return [self._review_out(r) for r in place_reviews]
