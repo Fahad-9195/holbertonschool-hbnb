@@ -25,6 +25,27 @@ amenity_out = api.model("AmenityOut", {
     "name": fields.String,
 })
 
+review_user_out = api.model("ReviewUserOut", {
+    "id": fields.String,
+    "first_name": fields.String,
+    "last_name": fields.String,
+})
+
+review_place_out = api.model("ReviewPlaceOut", {
+    "id": fields.String,
+    "name": fields.String,
+})
+
+review_for_place_out = api.model("ReviewForPlaceOut", {
+    "id": fields.String,
+    "text": fields.String,
+    "rating": fields.Integer,
+    "user_id": fields.String,
+    "place_id": fields.String,
+    "user": fields.Nested(review_user_out),
+    "place": fields.Nested(review_place_out),
+})
+
 place_out = api.model("PlaceOut", {
     "id": fields.String,
     "name": fields.String,
@@ -74,5 +95,14 @@ class PlaceById(Resource):
             api.abort(400, str(e))
         except ConflictError as e:
             api.abort(409, str(e))
+        except NotFoundError as e:
+            api.abort(404, str(e))
+
+@api.route("/<string:place_id>/reviews")
+class PlaceReviews(Resource):
+    @api.marshal_list_with(review_for_place_out)
+    def get(self, place_id):
+        try:
+            return facade.list_reviews_by_place(place_id)
         except NotFoundError as e:
             api.abort(404, str(e))

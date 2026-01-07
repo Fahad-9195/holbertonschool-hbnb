@@ -14,7 +14,10 @@ class Review(BaseModel):
             self.text = require_str(data["text"], "text", max_len=1000)
         if "rating" in data:
             self.rating = require_int(data["rating"], "rating", min_v=1, max_v=5)
-        # user_id/place_id عادة ثابتة
+        if "user_id" in data:
+            self.user_id = require_uuid_str(data["user_id"], "user_id")
+        if "place_id" in data:
+            self.place_id = require_uuid_str(data["place_id"], "place_id")
         self.touch()
         return self
 
