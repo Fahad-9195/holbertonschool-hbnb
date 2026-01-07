@@ -40,7 +40,7 @@ class Place(BaseModel):
             self.latitude = require_float(data["latitude"], "latitude", min_v=-90.0, max_v=90.0)
         if "longitude" in data:
             self.longitude = require_float(data["longitude"], "longitude", min_v=-180.0, max_v=180.0)
-        # owner_id عادة ما يتغيرش، لكن لو تبغاه:
+        # owner_id usually doesn't change, but if needed:
         if "owner_id" in data:
             self.owner_id = require_uuid_str(data["owner_id"], "owner_id")
 
