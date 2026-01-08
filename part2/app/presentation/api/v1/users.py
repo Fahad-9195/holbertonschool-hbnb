@@ -38,3 +38,15 @@ class UserById(Resource):
             return facade.get_user(user_id)
         except NotFoundError as e:
             api.abort(404, str(e))
+
+    @api.expect(user_in, validate=False)
+    @api.marshal_with(user_out)
+    def put(self, user_id):
+        try:
+            return facade.update_user(user_id, api.payload)
+        except ValidationError as e:
+            api.abort(400, str(e))
+        except ConflictError as e:
+            api.abort(409, str(e))
+        except NotFoundError as e:
+            api.abort(404, str(e))
