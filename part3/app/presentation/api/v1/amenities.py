@@ -1,9 +1,7 @@
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import jwt_required
-from app.persistence.repository.database import AmenityRepository
-from app.models import Amenity
-from app.common.exceptions import ValidationError, ConflictError, NotFoundError
-from app.auth import admin_required
+from app.persistence.repository import AmenityRepository, ConflictError, NotFoundError, ValidationError
+from app.models.base_model import Amenity
+from app.auth.auth_utils import admin_required
 
 api = Namespace("amenities", description="Amenities operations")
 
@@ -85,5 +83,4 @@ class AmenityById(Resource):
             repo.delete(amenity_id)
             return {"message": "Amenity deleted successfully"}, 200
         except NotFoundError as e:
-            api.abort(404, str(e))
             api.abort(404, str(e))

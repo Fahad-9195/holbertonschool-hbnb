@@ -1,8 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.persistence.repository.database import UserRepository
-from app.common.exceptions import ValidationError, ConflictError, NotFoundError
-from app.auth import admin_required
+from app.persistence.repository import UserRepository, ConflictError, NotFoundError, ValidationError
+from app.models.base_model import db, User
 
 api = Namespace("users", description="Users operations")
 
@@ -10,10 +9,14 @@ user_in = api.model("UserIn", {
     "first_name": fields.String(required=True),
     "last_name": fields.String(required=True),
     "email": fields.String(required=True),
+    "password": fields.String(required=True),
 })
 
-user_out = api.inherit("UserOut", user_in, {
+user_out = api.model("UserOut", {
     "id": fields.String,
+    "first_name": fields.String,
+    "last_name": fields.String,
+    "email": fields.String,
     "is_admin": fields.Boolean,
 })
 
@@ -36,28 +39,28 @@ class Users(Resource):
         try:
             data = api.payload
             
-            # Validate input
             if not data.get('first_name', '').strip():
                 api.abort(400, "first_name is required")
             if not data.get('last_name', '').strip():
                 api.abort(400, "last_name is required")
             if not data.get('email', '').strip():
                 api.abort(400, "email is required")
+            if not data.get('password', '').strip():
+                api.abort(400, "password is required")
             
             repo = UserRepository()
             if repo.email_exists(data['email']):
                 api.abort(409, "Email already exists")
             
-            from app.models import User
-            from app.auth import hash_password
-            
             user = User(
                 first_name=data['first_name'].strip(),
                 last_name=data['last_name'].strip(),
                 email=data['email'].strip().lower(),
-                password=hash_password('defaultpassword'),  # Default password
                 is_admin=False
             )
+            
+            # Hash the password using the User model's method
+            user.hash_password(data['password'].strip())
             
             created_user = repo.add(user)
             return created_user.to_dict(), 201
@@ -85,15 +88,23 @@ class UserById(Resource):
         """Update a user"""
         try:
             current_user_id = get_jwt_identity()
-            
-            # Users can only update their own profile, admins can update anyone
             repo = UserRepository()
+            
             current_user = repo.get(current_user_id)
             if user_id != current_user_id and not current_user.is_admin:
                 api.abort(403, "You can only update your own profile")
             
             data = api.payload
-            user = repo.update(user_id, data)
+            user = repo.get(user_id)
+            
+            # Only allow updating first_name and last_name
+            update_data = {}
+            if 'first_name' in data:
+                update_data['first_name'] = data['first_name'].strip()
+            if 'last_name' in data:
+                update_data['last_name'] = data['last_name'].strip()
+            
+            user = repo.update(user_id, update_data)
             return user.to_dict()
         except NotFoundError as e:
             api.abort(404, str(e))
@@ -108,7 +119,6 @@ class UserById(Resource):
             repo = UserRepository()
             current_user = repo.get(current_user_id)
             
-            # Users can only delete their own profile, admins can delete anyone
             if user_id != current_user_id and not current_user.is_admin:
                 api.abort(403, "You can only delete your own profile")
             

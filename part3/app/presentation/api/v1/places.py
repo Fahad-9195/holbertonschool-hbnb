@@ -1,8 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.persistence.repository.database import PlaceRepository, UserRepository, AmenityRepository
-from app.models import Place, db
-from app.common.exceptions import ValidationError, ConflictError, NotFoundError
+from app.persistence.repository import PlaceRepository, AmenityRepository, UserRepository, ConflictError, NotFoundError, ValidationError
+from app.models.base_model import db, Place
 
 api = Namespace("places", description="Places operations")
 
@@ -12,29 +11,13 @@ place_in = api.model("PlaceIn", {
     "price": fields.Float(required=True),
     "latitude": fields.Float(required=True),
     "longitude": fields.Float(required=True),
-    "amenity_ids": fields.List(fields.String, required=False),
 })
 
-owner_out = api.model("OwnerOut", {
+place_out = api.inherit("PlaceOut", place_in, {
     "id": fields.String,
-    "first_name": fields.String,
-    "last_name": fields.String,
-})
-
-amenity_out = api.model("AmenityOut", {
-    "id": fields.String,
-    "name": fields.String,
-})
-
-place_out = api.model("PlaceOut", {
-    "id": fields.String,
-    "name": fields.String,
-    "description": fields.String,
-    "price": fields.Float,
-    "latitude": fields.Float,
-    "longitude": fields.Float,
     "owner_id": fields.String,
     "amenity_ids": fields.List(fields.String),
+    "review_ids": fields.List(fields.String),
 })
 
 @api.route("/")
@@ -58,24 +41,18 @@ class Places(Resource):
             current_user_id = get_jwt_identity()
             data = api.payload
             
-            # Validate input
             if not data.get('name', '').strip():
                 api.abort(400, "name is required")
             if not data.get('description', '').strip():
                 api.abort(400, "description is required")
             if not data.get('price'):
                 api.abort(400, "price is required")
-            if data.get('latitude') is None:
-                api.abort(400, "latitude is required")
-            if data.get('longitude') is None:
-                api.abort(400, "longitude is required")
-            
-            # Verify owner exists
-            user_repo = UserRepository()
-            try:
-                user_repo.get(current_user_id)
-            except NotFoundError:
-                api.abort(404, "User not found")
+            if data['price'] < 0:
+                api.abort(400, "price must be positive")
+            if not data.get('latitude') or data['latitude'] < -90 or data['latitude'] > 90:
+                api.abort(400, "latitude must be between -90 and 90")
+            if not data.get('longitude') or data['longitude'] < -180 or data['longitude'] > 180:
+                api.abort(400, "longitude must be between -180 and 180")
             
             place = Place(
                 name=data['name'].strip(),
@@ -86,25 +63,13 @@ class Places(Resource):
                 owner_id=current_user_id
             )
             
-            # Add amenities if provided
-            if data.get('amenity_ids'):
-                amenity_repo = AmenityRepository()
-                for amenity_id in data['amenity_ids']:
-                    try:
-                        amenity = amenity_repo.get(amenity_id)
-                        place.amenities.append(amenity)
-                    except NotFoundError:
-                        pass
-            
             repo = PlaceRepository()
             created_place = repo.add(place)
             return created_place.to_dict(), 201
-        except (ValidationError, ValueError) as e:
-            api.abort(400, str(e))
         except ConflictError as e:
             api.abort(409, str(e))
-        except NotFoundError as e:
-            api.abort(404, str(e))
+        except ValidationError as e:
+            api.abort(400, str(e))
 
 @api.route("/<string:place_id>")
 class PlaceById(Resource):
@@ -128,43 +93,19 @@ class PlaceById(Resource):
             repo = PlaceRepository()
             place = repo.get(place_id)
             
-            # Only owner or admin can update
             user_repo = UserRepository()
             current_user = user_repo.get(current_user_id)
+            
             if place.owner_id != current_user_id and not current_user.is_admin:
                 api.abort(403, "You can only update your own places")
             
             data = api.payload
-            
-            if 'name' in data and data['name']:
-                place.name = data['name'].strip()
-            if 'description' in data and data['description']:
-                place.description = data['description'].strip()
-            if 'price' in data and data['price'] is not None:
-                place.price = float(data['price'])
-            if 'latitude' in data and data['latitude'] is not None:
-                place.latitude = float(data['latitude'])
-            if 'longitude' in data and data['longitude'] is not None:
-                place.longitude = float(data['longitude'])
-            
-            # Update amenities if provided
-            if 'amenity_ids' in data:
-                place.amenities = []
-                if data['amenity_ids']:
-                    amenity_repo = AmenityRepository()
-                    for amenity_id in data['amenity_ids']:
-                        try:
-                            amenity = amenity_repo.get(amenity_id)
-                            place.amenities.append(amenity)
-                        except NotFoundError:
-                            pass
-            
-            db.session.commit()
+            place = repo.update(place_id, data)
             return place.to_dict()
         except NotFoundError as e:
             api.abort(404, str(e))
-        except (ValidationError, ValueError) as e:
-            api.abort(400, str(e))
+        except ConflictError as e:
+            api.abort(409, str(e))
 
     @jwt_required()
     def delete(self, place_id):
@@ -174,22 +115,13 @@ class PlaceById(Resource):
             repo = PlaceRepository()
             place = repo.get(place_id)
             
-            # Only owner or admin can delete
             user_repo = UserRepository()
             current_user = user_repo.get(current_user_id)
+            
             if place.owner_id != current_user_id and not current_user.is_admin:
                 api.abort(403, "You can only delete your own places")
             
             repo.delete(place_id)
             return {"message": "Place deleted successfully"}, 200
-        except NotFoundError as e:
-            api.abort(404, str(e))
-
-@api.route("/<string:place_id>/reviews")
-class PlaceReviews(Resource):
-    @api.marshal_list_with(review_for_place_out)
-    def get(self, place_id):
-        try:
-            return facade.list_reviews_by_place(place_id)
         except NotFoundError as e:
             api.abort(404, str(e))

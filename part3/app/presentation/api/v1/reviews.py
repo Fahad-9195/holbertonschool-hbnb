@@ -1,8 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.persistence.repository.database import ReviewRepository, UserRepository, PlaceRepository
-from app.models import Review, db
-from app.common.exceptions import ValidationError, ConflictError, NotFoundError
+from app.persistence.repository import ReviewRepository, UserRepository, PlaceRepository, ConflictError, NotFoundError, ValidationError
+from app.models.base_model import db, Review
 
 api = Namespace("reviews", description="Reviews operations")
 
@@ -10,17 +9,6 @@ review_in = api.model("ReviewIn", {
     "text": fields.String(required=True),
     "rating": fields.Integer(required=True),
     "place_id": fields.String(required=True),
-})
-
-user_out = api.model("UserOut", {
-    "id": fields.String,
-    "first_name": fields.String,
-    "last_name": fields.String,
-})
-
-place_out = api.model("PlaceOut", {
-    "id": fields.String,
-    "name": fields.String,
 })
 
 review_out = api.model("ReviewOut", {
@@ -52,7 +40,6 @@ class Reviews(Resource):
             current_user_id = get_jwt_identity()
             data = api.payload
             
-            # Validate input
             if not data.get('text', '').strip():
                 api.abort(400, "text is required")
             if not data.get('rating'):
@@ -60,17 +47,25 @@ class Reviews(Resource):
             if not data.get('place_id'):
                 api.abort(400, "place_id is required")
             
-            # Verify rating is between 1-5
             rating = int(data['rating'])
             if rating < 1 or rating > 5:
                 api.abort(400, "rating must be between 1 and 5")
             
-            # Verify place exists
+            # Get the place
             place_repo = PlaceRepository()
             try:
-                place_repo.get(data['place_id'])
+                place = place_repo.get(data['place_id'])
             except NotFoundError:
                 api.abort(404, "Place not found")
+            
+            # Check if user owns the place
+            if place.owner_id == current_user_id:
+                api.abort(400, "You cannot review your own place")
+            
+            # Check if user has already reviewed this place
+            review_repo = ReviewRepository()
+            if review_repo.user_has_reviewed_place(current_user_id, data['place_id']):
+                api.abort(400, "You have already reviewed this place")
             
             review = Review(
                 text=data['text'].strip(),
@@ -79,15 +74,12 @@ class Reviews(Resource):
                 place_id=data['place_id']
             )
             
-            repo = ReviewRepository()
-            created_review = repo.add(review)
+            created_review = review_repo.add(review)
             return created_review.to_dict(), 201
         except (ValidationError, ValueError) as e:
             api.abort(400, str(e))
         except ConflictError as e:
             api.abort(409, str(e))
-        except NotFoundError as e:
-            api.abort(404, str(e))
 
 @api.route("/<string:review_id>")
 class ReviewById(Resource):
@@ -111,9 +103,9 @@ class ReviewById(Resource):
             repo = ReviewRepository()
             review = repo.get(review_id)
             
-            # Only reviewer or admin can update
             user_repo = UserRepository()
             current_user = user_repo.get(current_user_id)
+            
             if review.user_id != current_user_id and not current_user.is_admin:
                 api.abort(403, "You can only update your own reviews")
             
@@ -142,32 +134,13 @@ class ReviewById(Resource):
             repo = ReviewRepository()
             review = repo.get(review_id)
             
-            # Only reviewer or admin can delete
             user_repo = UserRepository()
             current_user = user_repo.get(current_user_id)
+            
             if review.user_id != current_user_id and not current_user.is_admin:
                 api.abort(403, "You can only delete your own reviews")
             
             repo.delete(review_id)
             return {"message": "Review deleted successfully"}, 200
-        except NotFoundError as e:
-            api.abort(404, str(e))
-
-    @api.expect(review_in, validate=False)
-    @api.marshal_with(review_out)
-    def put(self, review_id):
-        try:
-            return facade.update_review(review_id, api.payload)
-        except (ValidationError, ValueError) as e:
-            api.abort(400, str(e))
-        except ConflictError as e:
-            api.abort(409, str(e))
-        except NotFoundError as e:
-            api.abort(404, str(e))
-
-    @api.doc(responses={200: "Review deleted successfully", 404: "Review not found"})
-    def delete(self, review_id):
-        try:
-            return facade.delete_review(review_id), 200
         except NotFoundError as e:
             api.abort(404, str(e))

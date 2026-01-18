@@ -5,6 +5,7 @@ HBnB Evolution is a simplified AirBnB-like application built using a layered arc
 This repository contains:
 - **Part 1**: Technical documentation and UML design diagrams
 - **Part 2**: Full implementation of core business logic and REST API endpoints
+- **Part 3**: Authentication, Authorization, and Database Integration with SQLAlchemy
 
 ---
 
@@ -12,22 +13,57 @@ This repository contains:
 
 ```text
 holbertonschool-hbnb/
+├── README.md
+├── QUICKSTART.md                      # Quick start guide
+├── IMPLEMENTATION_SUMMARY.md          # Part 3 implementation details
 ├── part1/
 │   ├── README.md
 │   └── diagrams/
-│       ├── 0_package_diagram.png
-│       ├── 1_class_diagram.png
-│       ├── 2_1_user_registration.png
-│       ├── 2_2_place_creation.png
-│       ├── 2_3_review_submission.png
-│       └── 2_4_fetch_places.png
+│       ├── High-Level-Package-Diagram.md
+│       ├── Detailed Class Diagram for Business Logic Layer.md
+│       └── Sequence Diagrams for API Calls.md
 └── part2/
+    ├── README.md
+    ├── PART3_README.md               # Part 3 full documentation
+    ├── DATABASE_SCHEMA.md            # ER diagram and schema
+    ├── requirements.txt              # Dependencies with new packages
+    ├── config.py                     # Database configuration
+    ├── .env                          # Environment variables
+    ├── .env.example                  # Environment template
+    ├── run.py                        # Application entry point
+    ├── init_db.py                    # Database initialization
+    ├── verify_setup.py               # Setup verification
     ├── app/
-    │   ├── __init__.py
+    │   ├── __init__.py               # Flask app factory with JWT & SQLAlchemy
+    │   ├── models.py                 # SQLAlchemy ORM models
+    │   ├── auth.py                   # Authentication utilities
     │   ├── business_logic/
     │   │   ├── base.py
     │   │   ├── user.py
     │   │   ├── place.py
+    │   │   ├── review.py
+    │   │   ├── amenity.py
+    │   │   └── validators.py
+    │   ├── common/
+    │   │   └── exceptions.py
+    │   ├── persistence/
+    │   │   └── repository/
+    │   │       ├── in_memory.py      # Legacy in-memory storage
+    │   │       └── database.py       # SQLAlchemy repositories (NEW)
+    │   ├── presentation/
+    │   │   └── api/v1/
+    │   │       ├── auth.py           # Authentication endpoints (NEW)
+    │   │       ├── users.py          # Updated with JWT & DB
+    │   │       ├── places.py         # Updated with JWT & DB
+    │   │       ├── reviews.py        # Updated with JWT & DB
+    │   │       └── amenities.py      # Updated with JWT & DB
+    │   └── services/
+    │       └── facade.py
+    └── tests/
+        ├── test_business_logic.py
+        ├── test_facade.py
+        ├── test_api.py
+        └── test_part3.py             # Part 3 tests (NEW)
     │   │   ├── review.py
     │   │   ├── amenity.py
     │   │   └── validators.py
