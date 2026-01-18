@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.persistence.repository import ReviewRepository, UserRepository, PlaceRepository, ConflictError, NotFoundError, ValidationError
 from app.models.base_model import db, Review
 
@@ -100,13 +100,14 @@ class ReviewById(Resource):
         """Update a review"""
         try:
             current_user_id = get_jwt_identity()
+            claims = get_jwt()
+            is_admin = claims.get('is_admin', False)
+            
             repo = ReviewRepository()
             review = repo.get(review_id)
             
-            user_repo = UserRepository()
-            current_user = user_repo.get(current_user_id)
-            
-            if review.user_id != current_user_id and not current_user.is_admin:
+            # Admins can update any review, non-admins can only update their own
+            if review.user_id != current_user_id and not is_admin:
                 api.abort(403, "You can only update your own reviews")
             
             data = api.payload
@@ -131,13 +132,14 @@ class ReviewById(Resource):
         """Delete a review"""
         try:
             current_user_id = get_jwt_identity()
+            claims = get_jwt()
+            is_admin = claims.get('is_admin', False)
+            
             repo = ReviewRepository()
             review = repo.get(review_id)
             
-            user_repo = UserRepository()
-            current_user = user_repo.get(current_user_id)
-            
-            if review.user_id != current_user_id and not current_user.is_admin:
+            # Admins can delete any review, non-admins can only delete their own
+            if review.user_id != current_user_id and not is_admin:
                 api.abort(403, "You can only delete your own reviews")
             
             repo.delete(review_id)

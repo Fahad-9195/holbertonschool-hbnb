@@ -1,7 +1,8 @@
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.persistence.repository import UserRepository, ConflictError, NotFoundError, ValidationError
 from app.models.base_model import db, User
+from app.auth.auth_utils import admin_required
 
 api = Namespace("users", description="Users operations")
 
@@ -34,8 +35,9 @@ class Users(Resource):
 
     @api.expect(user_in, validate=True)
     @api.marshal_with(user_out, code=201)
+    @admin_required
     def post(self):
-        """Create a new user"""
+        """Create a new user (Admin only)"""
         try:
             data = api.payload
             
@@ -52,11 +54,14 @@ class Users(Resource):
             if repo.email_exists(data['email']):
                 api.abort(409, "Email already exists")
             
+            # Admin can optionally set is_admin flag for new users
+            is_admin = data.get('is_admin', False) if isinstance(data.get('is_admin'), bool) else False
+            
             user = User(
                 first_name=data['first_name'].strip(),
                 last_name=data['last_name'].strip(),
                 email=data['email'].strip().lower(),
-                is_admin=False
+                is_admin=is_admin
             )
             
             # Hash the password using the User model's method
@@ -88,21 +93,45 @@ class UserById(Resource):
         """Update a user"""
         try:
             current_user_id = get_jwt_identity()
-            repo = UserRepository()
+            claims = get_jwt()
+            is_admin = claims.get('is_admin', False)
             
-            current_user = repo.get(current_user_id)
-            if user_id != current_user_id and not current_user.is_admin:
+            repo = UserRepository()
+            user = repo.get(user_id)
+            data = api.payload
+            
+            # Non-admin users can only update their own profile
+            if user_id != current_user_id and not is_admin:
                 api.abort(403, "You can only update your own profile")
             
-            data = api.payload
-            user = repo.get(user_id)
-            
-            # Only allow updating first_name and last_name
+            # Admins can update any field (first_name, last_name, email, password, is_admin)
+            # Non-admins can only update first_name and last_name
             update_data = {}
-            if 'first_name' in data:
-                update_data['first_name'] = data['first_name'].strip()
-            if 'last_name' in data:
-                update_data['last_name'] = data['last_name'].strip()
+            
+            if is_admin:
+                # Admins can update all fields
+                if 'first_name' in data and data['first_name']:
+                    update_data['first_name'] = data['first_name'].strip()
+                if 'last_name' in data and data['last_name']:
+                    update_data['last_name'] = data['last_name'].strip()
+                if 'email' in data and data['email']:
+                    new_email = data['email'].strip().lower()
+                    # Check if email is already in use by another user
+                    existing_user = repo.get_by_email(new_email)
+                    if existing_user and existing_user.id != user_id:
+                        api.abort(409, "Email already exists")
+                    update_data['email'] = new_email
+                if 'password' in data and data['password']:
+                    # Admin is setting password directly
+                    update_data['password'] = data['password'].strip()
+                if 'is_admin' in data and isinstance(data['is_admin'], bool):
+                    update_data['is_admin'] = data['is_admin']
+            else:
+                # Non-admin users can only update first_name and last_name
+                if 'first_name' in data and data['first_name']:
+                    update_data['first_name'] = data['first_name'].strip()
+                if 'last_name' in data and data['last_name']:
+                    update_data['last_name'] = data['last_name'].strip()
             
             user = repo.update(user_id, update_data)
             return user.to_dict()

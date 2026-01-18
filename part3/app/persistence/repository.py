@@ -86,6 +86,23 @@ class UserRepository(Repository):
         if exclude_id:
             query = query.filter(User.id != exclude_id)
         return query.first() is not None
+    
+    def update(self, obj_id: str, data: dict):
+        """Update a user, with special handling for password"""
+        user = self.get(obj_id)
+        for key, value in data.items():
+            if key != 'id' and hasattr(user, key):
+                if key == 'password':
+                    # Hash the password if it's being updated
+                    user.hash_password(value)
+                else:
+                    setattr(user, key, value)
+        try:
+            db.session.commit()
+        except IntegrityError as e:
+            db.session.rollback()
+            raise ConflictError(f"Update failed: {str(e)}")
+        return user
 
 
 class PlaceRepository(Repository):
