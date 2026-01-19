@@ -19,14 +19,6 @@ class BaseModelDB:
         }
 
 
-# Association tables for many-to-many relationships
-place_amenity = db.Table(
-    'place_amenity',
-    db.Column('place_id', db.String(36), db.ForeignKey('place.id'), primary_key=True),
-    db.Column('amenity_id', db.String(36), db.ForeignKey('amenity.id'), primary_key=True)
-)
-
-
 class User(BaseModelDB, db.Model):
     """User model"""
     __tablename__ = 'user'
@@ -37,9 +29,7 @@ class User(BaseModelDB, db.Model):
     password = db.Column(db.String(255), nullable=False)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
     
-    # Relationships
-    places = db.relationship('Place', backref='owner', lazy=True, cascade='all, delete-orphan')
-    reviews = db.relationship('Review', backref='user', lazy=True, cascade='all, delete-orphan')
+    # Relationships will be added in later tasks
     
     def hash_password(self, password):
         """Hashes the password before storing it."""
@@ -80,29 +70,21 @@ class Place(BaseModelDB, db.Model):
     """Place model"""
     __tablename__ = 'place'
     
-    name = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(1000), nullable=False)
     price = db.Column(db.Float, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
-    owner_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False, index=True)
-    
-    # Relationships
-    amenities = db.relationship('Amenity', secondary=place_amenity, backref='places', lazy=True)
-    reviews = db.relationship('Review', backref='place', lazy=True, cascade='all, delete-orphan')
     
     def to_dict(self):
         """Convert place to dictionary"""
         data = super().to_dict()
         data.update({
-            'name': self.name,
+            'title': self.title,
             'description': self.description,
             'price': self.price,
             'latitude': self.latitude,
             'longitude': self.longitude,
-            'owner_id': self.owner_id,
-            'amenity_ids': [amenity.id for amenity in self.amenities],
-            'review_ids': [review.id for review in self.reviews],
         })
         return data
 
@@ -113,8 +95,6 @@ class Review(BaseModelDB, db.Model):
     
     text = db.Column(db.String(1000), nullable=False)
     rating = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False, index=True)
-    place_id = db.Column(db.String(36), db.ForeignKey('place.id'), nullable=False, index=True)
     
     def to_dict(self):
         """Convert review to dictionary"""
@@ -122,7 +102,5 @@ class Review(BaseModelDB, db.Model):
         data.update({
             'text': self.text,
             'rating': self.rating,
-            'user_id': self.user_id,
-            'place_id': self.place_id,
         })
         return data

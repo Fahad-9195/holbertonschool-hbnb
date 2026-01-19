@@ -131,7 +131,7 @@ class ReviewRepository(Repository):
         return Review.query.filter_by(user_id=user_id).all()
     
     def get_by_user_and_place(self, user_id: str, place_id: str):
-        """Get review by user and place - check for duplicate reviews"""
+        """Get review by user and place"""
         return Review.query.filter_by(user_id=user_id, place_id=place_id).first()
     
     def user_has_reviewed_place(self, user_id: str, place_id: str) -> bool:
