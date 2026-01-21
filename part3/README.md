@@ -1,328 +1,71 @@
-# 🏠 HBnB Part 3: Secure Backend with JWT Authentication & Database Integration
-
-> **A Production-Ready REST API with JWT Authentication, Role-Based Access Control, and SQLAlchemy ORM**
-
-<div align="center">
-
-![Python](https://img.shields.io/badge/Python-3.9+-blue?style=flat-square&logo=python)
-![Flask](https://img.shields.io/badge/Flask-3.0.0-black?style=flat-square&logo=flask)
-![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
-![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen?style=flat-square)
-
-</div>
-
----
-
-## 📋 Table of Contents
-
-- [Overview](#overview)
-- [Key Features](#key-features)
-- [Tech Stack](#tech-stack)
-- [Quick Start](#quick-start)
-- [API Documentation](#api-documentation)
-- [Architecture](#architecture)
-- [Authentication](#authentication)
-- [Project Structure](#project-structure)
-- [Environment Variables](#environment-variables)
-- [Testing](#testing)
-- [Deployment](#deployment)
-
----
-
-## 🎯 Overview
-
-**HBnB Part 3** is a secure, scalable REST API for property rental management built with Flask. It implements industry-standard security practices including:
-
-- ✅ **JWT-based authentication** with role-based access control
-- ✅ **Bcrypt password hashing** for secure credential storage
-- ✅ **SQLAlchemy ORM** for database abstraction
-- ✅ **SQLite** for development & **MySQL** for production
-- ✅ **RESTful API design** with automatic Swagger documentation
-- ✅ **Comprehensive error handling** and validation
-
----
-
-## ✨ Key Features
-
-### 🔐 Security
-- **JWT Authentication**: Stateless token-based authentication
-- **Password Hashing**: Bcrypt with salt for secure password storage
-- **Role-Based Authorization**: Admin and regular user roles
-- **Protected Endpoints**: Decorator-based access control
-- **CORS-Ready**: Prepared for cross-origin requests
-
-### 📊 Database
-- **Multi-Environment Support**: SQLite (dev) → MySQL (production)
-- **ORM Abstraction**: SQLAlchemy for database independence
-- **Data Relationships**: Proper foreign keys and cascading deletes
-- **Automated Migrations**: Easy schema management
-- **Transaction Safety**: ACID compliance
-
-### 🏗️ Architecture
-- **Application Factory Pattern**: Flexible app initialization
-- **Three-Layer Architecture**:
-  - 🎨 **Presentation**: REST API endpoints
-  - 💼 **Business Logic**: Services and validations
-  - 💾 **Persistence**: Database repositories
-- **Modular Design**: Easy to extend and maintain
-- **Clean Code**: Following Flask and Python best practices
-
-### 📡 API Features
-- **18+ Endpoints**: Full CRUD operations
-- **Auto Documentation**: Swagger/OpenAPI with Flask-RESTX
-- **Input Validation**: Automatic payload validation
-- **Error Handling**: Consistent error responses
-- **Status Codes**: RESTful HTTP status codes
-
----
-
-## 🛠️ Tech Stack
-
-| Component | Technology | Version |
-|-----------|-----------|---------|
-| **Framework** | Flask | 3.0.0 |
-| **API Documentation** | Flask-RESTX | 1.3.0 |
-| **Database ORM** | SQLAlchemy | 3.1.1 |
-| **Authentication** | Flask-JWT-Extended | 4.5.3 |
-| **Password Hashing** | Bcrypt | 4.1.1 |
-| **Environment Config** | Python-dotenv | 1.0.0 |
-| **Database (Dev)** | SQLite | Built-in |
-| **Database (Prod)** | MySQL | 5.7+ |
-| **Testing** | Pytest | 7.4.3 |
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Python 3.9+
-- pip or poetry
-- MySQL 5.7+ (for production only)
-
-### Installation
-
-```bash
-# 1. Clone the repository
-git clone <repository-url>
-cd part3
-
-# 2. Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Set up environment variables
-cp .env.example .env
-# Edit .env with your configuration
-
-# 5. Initialize database
-python init_db.py
-
-# 6. Run the application
-python run.py
-```
-
-### API Endpoint
-```
-http://localhost:5000
-API Documentation: http://localhost:5000 (Swagger UI)
-```
-
----
-
-## 📡 API Documentation
-
-### Authentication Endpoints
-
-#### **Register User**
-```http
-POST /api/v1/auth/register
-Content-Type: application/json
-
-{
-  "first_name": "John",
-  "last_name": "Doe",
-  "email": "john@example.com",
-  "password": "securepass123"
-}
-```
-
-**Response:** `201 Created`
-```json
-{
-  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
-  "user_id": "550e8400-e29b-41d4-a716-446655440000"
-}
-```
-
-#### **Login User**
-```http
-POST /api/v1/auth/login
-Content-Type: application/json
-
-{
-  "email": "john@example.com",
-  "password": "securepass123"
-}
-```
-
-**Response:** `200 OK`
-```json
-{
-  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
-  "user_id": "550e8400-e29b-41d4-a716-446655440000"
-}
-```
-
-### Users Endpoints
-
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/v1/users` | List all users | - |
-| POST | `/api/v1/users` | Create user | - |
-| GET | `/api/v1/users/{id}` | Get user details | - |
-| PUT | `/api/v1/users/{id}` | Update user | ✅ |
-| DELETE | `/api/v1/users/{id}` | Delete user | ✅ |
-
-### Places Endpoints
-
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/v1/places` | List all places | - |
-| POST | `/api/v1/places` | Create place | ✅ |
-| GET | `/api/v1/places/{id}` | Get place details | - |
-| PUT | `/api/v1/places/{id}` | Update place | ✅ |
-| DELETE | `/api/v1/places/{id}` | Delete place | ✅ |
-
-### Reviews Endpoints
-
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/v1/reviews` | List all reviews | - |
-| POST | `/api/v1/reviews` | Create review | ✅ |
-| GET | `/api/v1/reviews/{id}` | Get review details | - |
-| PUT | `/api/v1/reviews/{id}` | Update review | ✅ |
-| DELETE | `/api/v1/reviews/{id}` | Delete review | ✅ |
-
-### Amenities Endpoints
-
-| Method | Endpoint | Description | Auth | Admin |
-|--------|----------|-------------|------|-------|
-| GET | `/api/v1/amenities` | List amenities | - | - |
-| POST | `/api/v1/amenities` | Create amenity | ✅ | ✅ |
-| GET | `/api/v1/amenities/{id}` | Get amenity | - | - |
-| PUT | `/api/v1/amenities/{id}` | Update amenity | ✅ | ✅ |
-| DELETE | `/api/v1/amenities/{id}` | Delete amenity | ✅ | ✅ |
-
----
-
-## 🔐 Authentication
-
-### Using JWT Tokens
-
-All protected endpoints require a JWT token in the Authorization header:
-
-```bash
-curl -X GET http://localhost:5000/api/v1/users \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-```
-
-### Token Structure
-
-JWT tokens include:
-- **Identity**: User ID
-- **Claims**: `is_admin` flag for role-based access
-- **Expiration**: 1 hour (configurable)
-
-### User Roles
-
-- **Regular User**: Can manage own resources
-- **Admin User**: Full access to all resources
-
----
-
-## 🏗️ Architecture
-
-### Three-Layer Architecture
-
-```
-┌─────────────────────────────────────┐
-│   Presentation Layer (API)          │
-│  - Flask-RESTX Endpoints            │
-│  - Request Validation               │
-│  - Response Marshalling             │
-└──────────────┬──────────────────────┘
-               │
-┌──────────────┴──────────────────────┐
-│   Business Logic Layer              │
-│  - Services & Facades               │
-│  - Domain Validations               │
-│  - Business Rules                   │
-└──────────────┬──────────────────────┘
-               │
-┌──────────────┴──────────────────────┐
-│   Persistence Layer                 │
-│  - SQLAlchemy ORM                   │
-│  - Repository Pattern               │
-│  - Database Operations              │
-└─────────────────────────────────────┘
-```
-
-### Database Schema
-
-```
-┌─────────────┐
-│    User     │
-├─────────────┤
-│ id (PK)     │
-│ email (UQ)  │
-│ password    │
-│ first_name  │
-│ last_name   │
-│ is_admin    │
-└────┬────────┘
-     │ 1:N
-     ├──→ Place (owner_id)
-     └──→ Review (user_id)
-
-┌─────────────────┐
-│     Place       │
-├─────────────────┤
-│ id (PK)         │
-│ owner_id (FK)   │
-│ name            │
-│ description     │
-│ price           │
-│ latitude        │
-│ longitude       │
-└────┬────────────┘
-     │ 1:N
-     ├──→ Review (place_id)
-     └──→ M:N Amenity (place_amenity)
-
-┌─────────────┐
-│   Review    │
-├─────────────┤
-│ id (PK)     │
-│ user_id (FK)│
-│ place_id(FK)│
-│ text        │
-│ rating      │
-└─────────────┘
-
-┌─────────────┐
-│   Amenity   │
-├─────────────┤
-│ id (PK)     │
-│ name (UQ)   │
-└─────────────┘
-```
-
----
-
-## 📁 Project Structure
+# HBnB Part 3: Secure Backend with JWT Authentication & Database Integration
+
+## Overview
+
+This part implements a secure REST API with JWT authentication, role-based access control, and SQLAlchemy ORM for database persistence.
+
+## Tasks
+
+### Task 0: Modify the Application Factory to Include the Configuration
+- Updated `app/__init__.py` to implement Application Factory pattern
+- Configuration classes in `config.py` (Development, Production, Testing)
+- Application factory accepts configuration object
+
+### Task 1: Modify the User Model to Include Password Hashing
+- User model in `app/models/base_model.py` includes password hashing using bcrypt
+- Password hashing implemented in User model methods
+- Passwords are hashed before storage and not returned in GET requests
+
+### Task 2: Implement JWT Authentication with flask-jwt-extended
+- JWT authentication setup in `app/auth/auth_utils.py`
+- Login endpoint in `app/presentation/api/v1/auth.py`
+- JWT tokens generated upon successful login
+- Tokens include user claims (is_admin)
+
+### Task 3: Implement Authenticated User Access Endpoints
+- Protected endpoints require JWT authentication
+- Users can create, update, and delete their own places
+- Users can create and update their own reviews
+- Ownership validation implemented
+- Public endpoints remain accessible without authentication
+
+### Task 4: Implement Administrator Access Endpoints
+- Admin-only endpoints for user and amenity management
+- Administrators can bypass ownership restrictions
+- Role-based access control using is_admin claim in JWT
+
+### Task 5: Implement SQLAlchemy Repository
+- Repository pattern implemented in `app/persistence/repository.py`
+- SQLAlchemy-based repository replaces in-memory storage
+- Repository handles CRUD operations for all entities
+
+### Task 6: Map the User Entity to SQLAlchemy Model
+- BaseModelDB class in `app/models/base_model.py` with common attributes
+- User model mapped to SQLAlchemy with all attributes
+- UserRepository implemented for database operations
+
+### Task 7: Map Remaining Entities to SQLAlchemy Models
+- Place, Review, and Amenity models mapped to SQLAlchemy
+- All models inherit from BaseModelDB
+- Models include all required attributes and relationships
+
+### Task 8: Map Relationships Between Entities Using SQLAlchemy
+- One-to-many relationships: User -> Place, User -> Review, Place -> Review
+- Many-to-many relationship: Place <-> Amenity (via place_amenity table)
+- Foreign keys and relationship() defined in models
+- Backrefs implemented for bidirectional access
+
+### Task 9: SQL Scripts for Table Generation and Initial Data
+- `schema.sql`: Creates all database tables with relationships and constraints
+- `data.sql`: Inserts initial administrator user and amenities
+- `test_queries.sql`: Contains CRUD operations to verify schema and data
+
+### Task 10: Generate Database Diagrams
+- ER diagram created using Mermaid.js in `er_diagram.md`
+- Diagram includes all entities: User, Place, Review, Amenity, Place_Amenity
+- Relationships visualized: one-to-many and many-to-many
+
+## Project Structure
 
 ```
 part3/
@@ -338,227 +81,81 @@ part3/
 │       └── api/v1/
 │           ├── auth.py          # Auth endpoints
 │           ├── users.py         # User endpoints
-│           ├── places.py        # Place endpoints
-│           ├── reviews.py       # Review endpoints
-│           └── amenities.py     # Amenity endpoints
+│           ├── places.py         # Place endpoints
+│           ├── reviews.py        # Review endpoints
+│           └── amenities.py      # Amenity endpoints
 ├── config.py                    # Configuration classes
 ├── run.py                       # Application entry point
-├── init_db.py                   # Database initialization
 ├── requirements.txt             # Python dependencies
-├── .env                         # Environment variables
-└── README.md                    # This file
+├── schema.sql                   # Database schema (Task 9)
+├── data.sql                     # Initial data (Task 9)
+├── test_queries.sql             # Test queries (Task 9)
+└── er_diagram.md                # ER diagram (Task 10)
 ```
 
----
+## Database Schema
 
-## ⚙️ Environment Variables
+### Entities
 
-Create a `.env` file in the root directory:
+- **User**: id, first_name, last_name, email, password, is_admin, created_at, updated_at
+- **Place**: id, name, description, price, latitude, longitude, owner_id, created_at, updated_at
+- **Review**: id, text, rating, user_id, place_id, created_at, updated_at
+- **Amenity**: id, name, created_at, updated_at
+- **Place_Amenity**: place_id, amenity_id (association table)
 
-```env
-# Flask Configuration
-FLASK_ENV=development
-FLASK_DEBUG=True
+### Relationships
 
-# JWT Configuration
-JWT_SECRET_KEY=your-secret-key-change-in-production
-JWT_ACCESS_TOKEN_EXPIRES=3600
+- User -> Place (One-to-Many): A user can own many places
+- User -> Review (One-to-Many): A user can write many reviews
+- Place -> Review (One-to-Many): A place can have many reviews
+- Place <-> Amenity (Many-to-Many): A place can have many amenities, an amenity can be in many places
 
-# Database (Development)
-# SQLALCHEMY_DATABASE_URI=sqlite:///hbnb_dev.db
+## Setup
 
-# Database (Production - MySQL)
-SQLALCHEMY_DATABASE_URI=mysql+pymysql://user:password@localhost:3306/hbnb_prod
-
-# API Configuration
-API_TITLE=HBnB API
-API_VERSION=1.0
-```
-
-### Environment Configurations
-
-**Development:**
+1. Install dependencies:
 ```bash
+pip install -r requirements.txt
+```
+
+2. Set environment variables (create .env file):
+```
 FLASK_ENV=development
+JWT_SECRET_KEY=your-secret-key
 SQLALCHEMY_DATABASE_URI=sqlite:///hbnb_dev.db
 ```
 
-**Production:**
+3. Run the application:
 ```bash
-FLASK_ENV=production
-SQLALCHEMY_DATABASE_URI=mysql+pymysql://user:pass@host/db
+python run.py
 ```
 
-**Testing:**
-```bash
-FLASK_ENV=testing
-SQLALCHEMY_DATABASE_URI=sqlite:///:memory:
-```
+## API Endpoints
 
----
+- POST /api/v1/auth/register - Register new user
+- POST /api/v1/auth/login - Login and get JWT token
+- GET /api/v1/users/ - List all users (public)
+- GET /api/v1/users/<id> - Get user by ID (public)
+- PUT /api/v1/users/<id> - Update user (authenticated, self or admin)
+- POST /api/v1/places/ - Create place (authenticated)
+- GET /api/v1/places/ - List all places (public)
+- GET /api/v1/places/<id> - Get place by ID (public)
+- PUT /api/v1/places/<id> - Update place (authenticated, owner or admin)
+- DELETE /api/v1/places/<id> - Delete place (authenticated, owner or admin)
+- POST /api/v1/reviews/ - Create review (authenticated)
+- GET /api/v1/reviews/ - List all reviews (public)
+- GET /api/v1/reviews/<id> - Get review by ID (public)
+- PUT /api/v1/reviews/<id> - Update review (authenticated, author or admin)
+- DELETE /api/v1/reviews/<id> - Delete review (authenticated, author or admin)
+- GET /api/v1/amenities/ - List all amenities (public)
+- POST /api/v1/amenities/ - Create amenity (admin only)
+- PUT /api/v1/amenities/<id> - Update amenity (admin only)
+- DELETE /api/v1/amenities/<id> - Delete amenity (admin only)
 
-## 🧪 Testing
+## Technologies
 
-### Running Tests
-
-```bash
-# Run all tests
-pytest
-
-# Run with verbose output
-pytest -v
-
-# Run specific test file
-pytest tests/test_auth.py
-
-# Run with coverage
-pytest --cov=app
-```
-
-### Sample Data
-
-The `init_db.py` script creates sample data:
-
-| Email | Password | Role |
-|-------|----------|------|
-| admin@hbnb.com | admin123 | Admin |
-| john@example.com | password123 | User |
-| jane@example.com | password123 | User |
-
----
-
-## 🚀 Deployment
-
-### Production Checklist
-
-- [ ] Change `JWT_SECRET_KEY` to a secure random string
-- [ ] Set `FLASK_ENV=production`
-- [ ] Configure MySQL database
-- [ ] Set `DEBUG=False`
-- [ ] Use a production WSGI server (Gunicorn, uWSGI)
-- [ ] Set up SSL/TLS certificates
-- [ ] Configure CORS for frontend domain
-- [ ] Set up logging and monitoring
-
-### Deployment Command
-
-```bash
-# Using Gunicorn
-gunicorn -w 4 -b 0.0.0.0:5000 "app:create_app()"
-
-# Using uWSGI
-uwsgi --http :5000 --wsgi-file run.py --callable app --processes 4 --threads 2
-```
-
----
-
-## 📝 Default Users for Testing
-
-After running `init_db.py`, you can login with:
-
-```bash
-# Admin User
-curl -X POST http://localhost:5000/api/v1/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "admin@hbnb.com",
-    "password": "admin123"
-  }'
-
-# Regular User
-curl -X POST http://localhost:5000/api/v1/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "john@example.com",
-    "password": "password123"
-  }'
-```
-
----
-
-## 🔧 Configuration Details
-
-### Application Factory Pattern
-
-The app uses Flask's Application Factory pattern for flexible initialization:
-
-```python
-from app import create_app
-
-# Development
-app = create_app("config.DevelopmentConfig")
-
-# Production
-app = create_app("config.ProductionConfig")
-
-# Testing
-app = create_app("config.TestingConfig")
-```
-
-### JWT Configuration
-
-- **Algorithm**: HS256 (HMAC with SHA-256)
-- **Expiration**: 1 hour (3600 seconds)
-- **Claims**: `identity` (user ID) + `is_admin` flag
-- **Secret Key**: `JWT_SECRET_KEY` from config
-
----
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**1. Database Connection Error**
-```
-Solution: Check DATABASE_URI and ensure database server is running
-```
-
-**2. JWT Token Invalid**
-```
-Solution: Verify JWT_SECRET_KEY matches config
-```
-
-**3. Permission Denied (Admin Routes)**
-```
-Solution: Ensure user is admin or use admin user token
-```
-
-**4. Port Already in Use**
-```bash
-# Change port in run.py or use:
-python run.py --port 5001
-```
-
----
-
-## 📚 Resources
-
-- [Flask Documentation](https://flask.palletsprojects.com/)
-- [Flask-JWT-Extended](https://flask-jwt-extended.readthedocs.io/)
-- [SQLAlchemy Documentation](https://docs.sqlalchemy.org/)
-- [REST API Best Practices](https://restfulapi.net/)
-- [JWT Best Practices](https://tools.ietf.org/html/rfc7519)
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see LICENSE file for details.
-
----
-
-## 👨‍💻 Author
-
-**Holberton School - HBnB Project**
-
-Part 3: Secure Backend Implementation with JWT Authentication & Database Integration
-
----
-
-<div align="center">
-
-**Made with ❤️ for learning purpose**
-
-[⬆ Back to Top](#-hbnb-part-3-secure-backend-with-jwt-authentication--database-integration)
-
-</div>
+- Flask 3.0.0
+- Flask-SQLAlchemy 3.1.1
+- Flask-JWT-Extended 4.5.3
+- Flask-Bcrypt 4.1.1
+- Flask-RESTX 1.3.0
+- SQLite (development) / MySQL (production)
