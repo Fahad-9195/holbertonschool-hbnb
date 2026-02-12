@@ -1,0 +1,27 @@
+/* ============================================
+   HBnB - CSS Variables
+   ============================================ */
+
+:root {
+    --primary-color: #FF5A5F;
+    --primary-dark: #E04E52;
+    --primary-light: #FF7A7F;
+    --secondary-color: #00A699;
+    --accent-color: #FC642D;
+    --text-primary: #2C3E50;
+    --text-secondary: #5A6C7D;
+    --text-light: #8E9AAF;
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F7F9FC;
+    --bg-tertiary: #EDF1F5;
+    --border-color: #E1E8ED;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
+    --border-radius: 12px;
+    --border-radius-sm: 8px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-heading: 'Poppins', 'Inter', sans-serif;
+}

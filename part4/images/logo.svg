@@ -1,0 +1,38 @@
+<svg width="180" height="50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 50">
+  <!-- Modern HBnB Logo Design -->
+  
+  <!-- Icon: House/Building -->
+  <g transform="translate(5, 12)">
+    <!-- House/Building -->
+    <rect x="6" y="14" width="12" height="10" 
+          fill="#FF5A5F" 
+          rx="1"/>
+    <polygon points="6,14 12,8 18,14" 
+             fill="#E04E52"/>
+    <rect x="9" y="18" width="2" height="3" fill="white" opacity="0.8"/>
+    <rect x="13" y="18" width="2" height="3" fill="white" opacity="0.8"/>
+  </g>
+  
+  <!-- Brand Text -->
+  <g transform="translate(35, 0)">
+    <!-- HBnB Text with modern typography -->
+    <text x="0" y="32" 
+          font-family="Poppins, -apple-system, BlinkMacSystemFont, sans-serif" 
+          font-size="28" 
+          font-weight="700" 
+          fill="#FF5A5F" 
+          letter-spacing="-0.5">
+      HBnB
+    </text>
+    
+    <!-- Subtle tagline -->
+    <text x="0" y="45" 
+          font-family="Inter, sans-serif" 
+          font-size="9" 
+          font-weight="500" 
+          fill="#8E9AAF" 
+          letter-spacing="0.5">
+      Your Perfect Stay
+    </text>
+  </g>
+</svg>

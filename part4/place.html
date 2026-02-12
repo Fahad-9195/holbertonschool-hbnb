@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Place Details - HBnB">
+    <title>Place Details - HBnB</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="images/icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <img src="images/logo.svg" alt="HBnB Logo" onerror="this.style.display='none';">
+            </a>
+            <nav>
+                <a href="index.html">Home</a>
+                <span class="admin-badge hidden" id="admin-badge" title="Administrator">Admin</span>
+                <a href="login.html" class="login-button hidden" id="loginNavButton">Login</a>
+                <button class="logout-button hidden" id="logoutButton">Logout</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div id="loading" class="loading">Loading place details...</div>
+        
+        <div id="place-details" class="place-details hidden">
+            <div class="place-details-header">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="flex: 1;">
+                        <h1 class="place-details-title" id="placeName"></h1>
+                        <div class="place-details-price" id="placePrice"></div>
+                    </div>
+                    <div id="placeAdminActions" class="hidden" style="display: flex; gap: 0.5rem; margin-left: 1rem;">
+                        <button class="admin-action-button" id="deletePlaceButton" title="Delete Place (Admin Only)">Delete</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="place-info">
+                <div class="place-info-section">
+                    <h3>Description</h3>
+                    <p id="placeDescription"></p>
+                </div>
+
+                <div class="place-info-section">
+                    <h3>Host Information</h3>
+                    <p id="placeHost"></p>
+                </div>
+
+                <div class="place-info-section">
+                    <h3>Location</h3>
+                    <p id="placeLocation"></p>
+                </div>
+
+                <div class="place-info-section">
+                    <h3>Amenities</h3>
+                    <div id="placeAmenities" class="amenities-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="reviewsSection" class="reviews-section hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="margin: 0;">Reviews</h2>
+            </div>
+            <div id="reviewsContainer" class="reviews-container"></div>
+            <div id="noReviews" class="empty-state hidden">
+                <h3>No Reviews Yet</h3>
+                <p>Be the first to review this place!</p>
+            </div>
+        </div>
+
+        <div id="add-review" class="add-review hidden">
+            <h2>Add Your Review</h2>
+            <form id="addReviewForm">
+                <div class="form-group">
+                    <label for="reviewText">Your Review</label>
+                    <textarea 
+                        id="reviewText" 
+                        name="reviewText" 
+                        required 
+                        placeholder="Share your experience..."
+                        class="form-control"
+                    ></textarea>
+                    <span class="error-message hidden" id="reviewTextError"></span>
+                </div>
+
+                <div class="rating-input">
+                    <label for="reviewRating">Rating:</label>
+                    <select id="reviewRating" name="reviewRating" required>
+                        <option value="">Select Rating</option>
+                        <option value="1">1 Star</option>
+                        <option value="2">2 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="5">5 Stars</option>
+                    </select>
+                    <span class="error-message hidden" id="reviewRatingError"></span>
+                </div>
+
+                <button type="submit" class="submit-button" id="submitReviewButton">
+                    Submit Review
+                </button>
+
+                <div id="reviewFormError" class="error-message hidden" style="text-align: center; margin-top: 1rem;"></div>
+                <div id="reviewFormSuccess" class="success-message hidden" style="text-align: center; margin-top: 1rem;"></div>
+            </form>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 HBnB. All rights reserved.</p>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/places.js"></script>
+    <script src="js/reviews.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthentication();
+            loadPlaceDetails();
+            
+            const addReviewForm = document.getElementById('addReviewForm');
+            const reviewForm = document.getElementById('review-form'); // Task 4 requirement
+            const targetForm = reviewForm || addReviewForm;
+            if (targetForm) {
+                targetForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await handleAddReview();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

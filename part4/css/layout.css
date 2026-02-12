@@ -1,0 +1,146 @@
+/* ============================================
+   HBnB - Layout Styles
+   Header, footer, and page structure
+   ============================================ */
+
+/* ========== Header & Navigation ========== */
+header {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 251, 252, 0.98) 100%);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid rgba(255, 90, 95, 0.08);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    transition: all 0.3s ease;
+}
+
+header.scrolled {
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.logo:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+.logo img {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+    transition: var(--transition);
+}
+
+.logo img[src$=".svg"] {
+    height: 50px;
+    max-width: 200px;
+}
+
+.logo:hover img {
+    filter: brightness(1.1);
+}
+
+nav {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+nav a {
+    color: var(--text-secondary);
+    font-weight: 500;
+    padding: 0.5rem 0;
+    position: relative;
+    transition: var(--transition);
+    font-size: 0.95rem;
+}
+
+nav a:hover {
+    color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+nav a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    transition: var(--transition);
+    border-radius: 2px;
+}
+
+nav a:hover::after {
+    width: 100%;
+}
+
+/* ========== Footer ========== */
+footer {
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-secondary);
+    margin-top: 4rem;
+}
+
+footer p {
+    margin: 0;
+}
+
+/* ========== Responsive Design ========== */
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+
+    .header-container {
+        padding: 0 1rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    nav {
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    main {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+}

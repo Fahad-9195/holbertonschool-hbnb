@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Add Review - HBnB">
+    <title>Add Review - HBnB</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="images/icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <img src="images/logo.svg" alt="HBnB Logo" onerror="this.style.display='none';">
+            </a>
+            <nav>
+                <a href="index.html">Home</a>
+                <span class="admin-badge hidden" id="admin-badge" title="Administrator">Admin</span>
+                <a href="login.html" class="login-button hidden" id="loginNavButton">Login</a>
+                <button class="logout-button hidden" id="logoutButton">Logout</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="form-container">
+            <h1 style="text-align: center; margin-bottom: 0.5rem;">Add Your Review</h1>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">
+                Share your experience and help others make better decisions
+            </p>
+
+            <form id="review-form">
+                <div class="form-group">
+                    <label for="placeId">Place ID</label>
+                    <input 
+                        type="text" 
+                        id="placeId" 
+                        name="placeId" 
+                        required 
+                        placeholder="Enter the place ID"
+                        value=""
+                    >
+                    <span class="error-message hidden" id="placeIdError"></span>
+                    <small style="color: var(--text-light); font-size: 0.875rem; margin-top: 0.5rem; display: block;">
+                        You can find the Place ID in the URL when viewing a place (e.g., place.html?id=123)
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="reviewText">Your Review</label>
+                    <textarea 
+                        id="reviewText" 
+                        name="reviewText" 
+                        required 
+                        placeholder="Share your experience, what you liked, what could be improved..."
+                        rows="6"
+                    ></textarea>
+                    <span class="error-message hidden" id="reviewTextError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="reviewRating">Rating</label>
+                    <select id="reviewRating" name="reviewRating" required>
+                        <option value="">Select a rating</option>
+                        <option value="1">1 Star - Poor</option>
+                        <option value="2">2 Stars - Fair</option>
+                        <option value="3">3 Stars - Good</option>
+                        <option value="4">4 Stars - Very Good</option>
+                        <option value="5">5 Stars - Excellent</option>
+                    </select>
+                    <span class="error-message hidden" id="reviewRatingError"></span>
+                </div>
+
+                <button type="submit" class="submit-button" id="submitButton">
+                    Submit Review
+                </button>
+
+                <div id="formError" class="error-message hidden" style="text-align: center; margin-top: 1rem;"></div>
+                <div id="formSuccess" class="success-message hidden" style="text-align: center; margin-top: 1rem;"></div>
+            </form>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="index.html" style="color: var(--text-secondary);">← Back to Places</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 HBnB. All rights reserved.</p>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/reviews.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check authentication - redirect if not logged in
+            if (!isAuthenticated()) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            checkAuthentication();
+
+            // Get place ID from URL if available
+            const urlParams = new URLSearchParams(window.location.search);
+            const placeId = urlParams.get('place_id');
+            if (placeId) {
+                document.getElementById('placeId').value = placeId;
+            }
+
+            const reviewForm = document.getElementById('review-form');
+            if (reviewForm) {
+                reviewForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await handleAddReviewFromForm();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
