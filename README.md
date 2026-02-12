@@ -2,490 +2,452 @@
 
 HBnB Evolution is a simplified AirBnB-like application built using a layered architecture (Presentation → Business Logic → Persistence) and a Facade pattern to unify access to core use-cases.
 
-This repository contains:
+This repository contains a complete full-stack application developed in four progressive parts:
+
 - **Part 1**: Technical documentation and UML design diagrams
-- **Part 2**: Full implementation of core business logic and REST API endpoints
+- **Part 2**: Full implementation of core business logic and REST API endpoints with in-memory persistence
 - **Part 3**: Authentication, Authorization, and Database Integration with SQLAlchemy
+- **Part 4**: Modern web client (frontend) with HTML5, CSS3, and JavaScript
 
 ---
 
 ## Project Structure
 
-```text
+```
 holbertonschool-hbnb/
-├── README.md
-├── QUICKSTART.md                      # Quick start guide
-├── IMPLEMENTATION_SUMMARY.md          # Part 3 implementation details
-├── part1/
+├── README.md                    # This file - Project overview
+├── part1/                       # Technical Documentation (UML)
 │   ├── README.md
-│   └── diagrams/
-│       ├── High-Level-Package-Diagram.md
-│       ├── Detailed Class Diagram for Business Logic Layer.md
-│       └── Sequence Diagrams for API Calls.md
-└── part2/
+│   ├── High-Level-Package-Diagram.md
+│   ├── Detailed Class Diagram for Business Logic Layer.md
+│   └── Sequence Diagrams for API Calls.md
+├── part2/                       # Core Implementation (In-Memory)
+│   ├── README.md
+│   ├── app/
+│   │   ├── business_logic/     # Domain models and business rules
+│   │   ├── persistence/        # In-memory repository
+│   │   ├── presentation/      # REST API endpoints
+│   │   └── services/           # Facade pattern
+│   ├── tests/                  # Comprehensive test suite
+│   ├── requirements.txt
+│   └── run.py
+├── part3/                       # Secure Backend (JWT + SQLAlchemy)
+│   ├── README.md               # Detailed task documentation (Tasks 0-10)
+│   ├── app/
+│   │   ├── auth/               # JWT authentication utilities
+│   │   ├── models/             # SQLAlchemy ORM models
+│   │   ├── persistence/        # Database repositories
+│   │   └── presentation/       # Protected API endpoints
+│   ├── config.py               # Configuration classes
+│   ├── run.py                  # Application entry point
+│   ├── schema.sql              # Database schema (Task 9)
+│   ├── data.sql                # Initial data (Task 9)
+│   ├── test_queries.sql        # Test queries (Task 9)
+│   ├── er_diagram.md           # ER diagram (Task 10)
+│   └── requirements.txt
+└── part4/                       # Web Client (Frontend)
     ├── README.md
-    ├── PART3_README.md               # Part 3 full documentation
-    ├── DATABASE_SCHEMA.md            # ER diagram and schema
-    ├── requirements.txt              # Dependencies with new packages
-    ├── config.py                     # Database configuration
-    ├── .env                          # Environment variables
-    ├── .env.example                  # Environment template
-    ├── run.py                        # Application entry point
-    ├── init_db.py                    # Database initialization
-    ├── verify_setup.py               # Setup verification
-    ├── app/
-    │   ├── __init__.py               # Flask app factory with JWT & SQLAlchemy
-    │   ├── models.py                 # SQLAlchemy ORM models
-    │   ├── auth.py                   # Authentication utilities
-    │   ├── business_logic/
-    │   │   ├── base.py
-    │   │   ├── user.py
-    │   │   ├── place.py
-    │   │   ├── review.py
-    │   │   ├── amenity.py
-    │   │   └── validators.py
-    │   ├── common/
-    │   │   └── exceptions.py
-    │   ├── persistence/
-    │   │   └── repository/
-    │   │       ├── in_memory.py      # Legacy in-memory storage
-    │   │       └── database.py       # SQLAlchemy repositories (NEW)
-    │   ├── presentation/
-    │   │   └── api/v1/
-    │   │       ├── auth.py           # Authentication endpoints (NEW)
-    │   │       ├── users.py          # Updated with JWT & DB
-    │   │       ├── places.py         # Updated with JWT & DB
-    │   │       ├── reviews.py        # Updated with JWT & DB
-    │   │       └── amenities.py      # Updated with JWT & DB
-    │   └── services/
-    │       └── facade.py
-    └── tests/
-        ├── test_business_logic.py
-        ├── test_facade.py
-        ├── test_api.py
-        └── test_part3.py             # Part 3 tests (NEW)
-    │   │   ├── review.py
-    │   │   ├── amenity.py
-    │   │   └── validators.py
-    │   ├── common/
-    │   │   └── exceptions.py
-    │   ├── persistence/
-    │   │   └── repository/
-    │   │       └── in_memory.py
-    │   ├── presentation/
-    │   │   └── api/
-    │   │       └── v1/
-    │   │           ├── users.py
-    │   │           ├── amenities.py
-    │   │           ├── places.py
-    │   │           └── reviews.py
-    │   └── services/
-    │       └── facade.py
-    ├── tests/
-    │   ├── test_business_logic.py
-    │   ├── test_facade.py
-    │   └── test_api.py
-    ├── requirements.txt
-    ├── pytest.ini
-    └── run.py
+    ├── index.html              # Places listing page
+    ├── login.html              # Login page
+    ├── register.html           # Registration page
+    ├── place.html              # Place details page
+    ├── add_review.html         # Add review page
+    ├── css/                    # Modular CSS architecture
+    ├── js/                     # JavaScript modules
+    └── images/                 # Assets
 ```
 
 ---
 
 ## Part 1: Technical Documentation (UML)
 
-## Part 1: Technical Documentation (UML)
+**Objective**: Design the system architecture and create comprehensive UML diagrams before implementation.
 
-### Objectives
+### Deliverables
 
-- Design the high-level architecture (3-layer system)
-- Define the Business Logic classes (User, Place, Review, Amenity)
-- Show sequence diagrams for key API calls
-- Compile all into a clear documentation guide for implementation
+1. **High-Level Package Diagram**
+   - Illustrates three-layer architecture (Presentation, Business Logic, Persistence)
+   - Shows communication via Facade pattern
+   - Defines layer responsibilities
 
-### 0. High-Level Package Diagram
+2. **Detailed Class Diagram (Business Logic Layer)**
+   - Models core entities: User, Place, Review, Amenity
+   - Defines attributes, methods, and relationships
+   - Shows inheritance from BaseModel (id, created_at, updated_at)
 
-**Goal**: Illustrate the three-layer architecture and how layers communicate via the Facade pattern.
+3. **Sequence Diagrams**
+   - User Registration (POST /users)
+   - Place Creation (POST /places)
+   - Review Submission (POST /places/{id}/reviews)
+   - Fetching Places List (GET /places)
 
-**Architecture**:
+### Key Relationships
 
-- **Presentation Layer**: API endpoints, DTO validation, request/response handling
-- **Business Logic Layer**: Domain models + rules + HBnBFacade
-- **Persistence Layer**: Repositories/DAO + database operations (implemented in Part 3)
+- User owns many Places (one-to-many)
+- User writes many Reviews (one-to-many)
+- Place has many Reviews (one-to-many)
+- Place includes many Amenities (many-to-many)
 
-The Facade provides a single interface to use-cases and reduces coupling between layers.
-
-### 1. Detailed Class Diagram (Business Logic Layer)
-
-**Goal**: Model the core entities, attributes, methods, and relationships.
-
-**Key Concepts**:
-
-Every entity has:
-- `id` (UUID4)
-- `created_at`
-- `updated_at`
-
-**Relationships**:
-- User owns many Place
-- User writes many Review
-- Place has many Review
-- Place includes many Amenity (many-to-many)
-
-### 2. Sequence Diagrams (API Calls)
-
-These diagrams show the flow across: Client → Presentation → HBnBFacade → Persistence → Database
-
-**2.1 User Registration — POST /users**
-
-Flow Summary:
-- Validate request DTO
-- Check email uniqueness
-- Create user
-- Save user and return 201 Created
-- If email exists → 409 Conflict
-
-**2.2 Place Creation — POST /places**
-
-Flow Summary:
-- Validate request DTO
-- Verify owner exists
-- Validate place fields (price, lat, long)
-- Validate amenities (optional)
-- Save place + link amenities → 201 Created
-- Invalid owner → 404 Not Found
-
-**2.3 Review Submission — POST /places/{id}/reviews**
-
-Flow Summary:
-- Validate request DTO
-- Verify user exists
-- Verify place exists
-- Validate rating (1..5)
-- Save review → 201 Created
-- Invalid rating → 400 Bad Request
-- Place not found → 404 Not Found
-
-**2.4 Fetching a List of Places — GET /places**
-
-Flow Summary:
-- Parse and validate query filters
-- Facade validates filters
-- Repository performs search
-- Return 200 OK with list
-- Bad filters → 400 Bad Request
-
-### Requirements
-
-- Use UML notation for diagrams
-- Ensure separation of concerns between layers
-- Follow clean architecture style:
-  - Controllers are thin
-  - Business rules live in domain layer
-  - Persistence is accessed via repositories
+**Location**: `part1/` directory
 
 ---
 
 ## Part 2: Core Implementation and API Endpoints
 
-Part 2 implements the complete business logic layer, REST API endpoints, and a working in-memory persistence layer. All tasks from 0 to 6 have been completed and tested.
+**Objective**: Implement the complete business logic layer, REST API endpoints, and in-memory persistence.
 
-### Task 0: Project Setup and Package Initialization
+### Tasks Completed (0-6)
 
-**Objective**: Set up the initial project structure for the HBnB application, ensuring the codebase is organized according to best practices for a modular Python application.
+**Task 0: Project Setup and Package Initialization**
+- Three-layer architecture structure
+- Facade Pattern implementation (HBnBFacade)
+- In-Memory Repository
+- Flask-RESTx configuration
 
-**Implementation**:
+**Task 1: Core Business Logic Classes**
+- BaseModel with common attributes
+- User, Place, Review, Amenity entities
+- Validation logic and business rules
+- Relationship management
 
-- Created a three-layer architecture structure:
-  - **Presentation Layer** (`app/presentation/api/v1/`): Flask-RESTx API endpoints
-  - **Business Logic Layer** (`app/business_logic/`): Domain models and business rules
-  - **Persistence Layer** (`app/persistence/repository/`): In-memory repository implementation
-- Implemented **Facade Pattern** (`app/services/facade.py`): `HBnBFacade` class provides a unified interface for all use cases
-- Implemented **In-Memory Repository** (`app/persistence/repository/in_memory.py`): Generic repository for storing entities in memory
-- Configured Flask application with Flask-RESTx for automatic API documentation
-- Set up project dependencies in `requirements.txt` (Flask, flask-restx, pytest)
-- Created test structure with pytest configuration
+**Task 2: User Endpoints**
+- POST /api/v1/users/ - Create user
+- GET /api/v1/users/ - List all users
+- GET /api/v1/users/<id> - Get user by ID
+- PUT /api/v1/users/<id> - Update user
 
-**Key Files**:
-- `app/__init__.py`: Flask app factory with namespace registration
-- `app/services/facade.py`: HBnBFacade class managing all business operations
-- `app/persistence/repository/in_memory.py`: InMemoryRepository class
-- `app/common/exceptions.py`: Custom exceptions (ValidationError, NotFoundError, ConflictError)
+**Task 3: Amenity Endpoints**
+- POST /api/v1/amenities/ - Create amenity
+- GET /api/v1/amenities/ - List all amenities
+- GET /api/v1/amenities/<id> - Get amenity by ID
+- PUT /api/v1/amenities/<id> - Update amenity
 
-### Task 1: Core Business Logic Classes
+**Task 4: Place Endpoints**
+- POST /api/v1/places/ - Create place
+- GET /api/v1/places/ - List all places
+- GET /api/v1/places/<id> - Get place by ID
+- PUT /api/v1/places/<id> - Update place
+- GET /api/v1/places/<id>/reviews - Get place reviews
 
-**Objective**: Implement the core business logic classes that define the entities of the HBnB application, including attributes, methods, and relationships.
+**Task 5: Review Endpoints**
+- POST /api/v1/reviews/ - Create review
+- GET /api/v1/reviews/ - List all reviews
+- GET /api/v1/reviews/<id> - Get review by ID
+- PUT /api/v1/reviews/<id> - Update review
+- DELETE /api/v1/reviews/<id> - Delete review
 
-**Implementation**:
-
-- **BaseModel** (`app/business_logic/base.py`):
-  - Provides common attributes: `id` (UUID4), `created_at`, `updated_at`
-  - Implements `touch()` method to update `updated_at` timestamp
-
-- **User** (`app/business_logic/user.py`):
-  - Attributes: `first_name`, `last_name`, `email`
-  - Validation: String fields with length constraints (first_name, last_name: max 50, email: max 255)
-  - Methods: `update()`, `to_dict()`
-  - No password field (as per requirements)
-
-- **Place** (`app/business_logic/place.py`):
-  - Attributes: `name`, `description`, `price`, `latitude`, `longitude`, `owner_id`
-  - Relationships: `amenity_ids` (list), `review_ids` (list)
-  - Validation: 
-    - Price must be >= 0
-    - Latitude must be between -90 and 90
-    - Longitude must be between -180 and 180
-  - Methods: `add_amenity()`, `add_review()`, `update()`, `to_dict()`
-
-- **Review** (`app/business_logic/review.py`):
-  - Attributes: `text`, `rating`, `user_id`, `place_id`
-  - Validation: Rating must be between 1 and 5, text max 1000 characters
-  - Methods: `update()`, `to_dict()`
-
-- **Amenity** (`app/business_logic/amenity.py`):
-  - Attributes: `name`
-  - Validation: Name max 50 characters
-  - Methods: `update()`, `to_dict()`
-
-- **Validators** (`app/business_logic/validators.py`):
-  - `require_str()`: Validates string fields with min/max length
-  - `require_float()`: Validates numeric fields with min/max constraints
-  - `require_int()`: Validates integer fields with min/max constraints
-  - `require_uuid_str()`: Validates UUID string format
-
-**Relationships Implemented**:
-- User owns many Places (via `place.owner_id`)
-- User writes many Reviews (via `review.user_id`)
-- Place has many Reviews (via `place.review_ids` and `review.place_id`)
-- Place includes many Amenities (many-to-many via `place.amenity_ids`)
-
-### Task 2: User Endpoints
-
-**Objective**: Implement API endpoints for managing users with CRUD operations (Create, Read, Update). DELETE is not implemented for users.
-
-**Implementation**:
-
-- **POST /api/v1/users/**: Create a new user
-  - Validates required fields: `first_name`, `last_name`, `email`
-  - Ensures email uniqueness (409 Conflict if duplicate)
-  - Returns 201 Created with user data
-
-- **GET /api/v1/users/**: List all users
-  - Returns 200 OK with array of all users
-  - Password is not included in responses (no password field exists)
-
-- **GET /api/v1/users/<user_id>**: Get user by ID
-  - Returns 200 OK with user data
-  - Returns 404 Not Found if user doesn't exist
-
-- **PUT /api/v1/users/<user_id>**: Update user information
-  - Validates updated fields
-  - Ensures email uniqueness if email is being updated
-  - Returns 200 OK with updated user data
-  - Returns 404 Not Found if user doesn't exist
-  - Returns 409 Conflict if email already exists
-
-**Error Handling**:
-- 400 Bad Request: Validation errors
-- 404 Not Found: User not found
-- 409 Conflict: Duplicate email
-
-### Task 3: Amenity Endpoints
-
-**Objective**: Implement API endpoints for managing amenities with CRUD operations (Create, Read, Update). DELETE is not implemented for amenities.
-
-**Implementation**:
-
-- **POST /api/v1/amenities/**: Create a new amenity
-  - Validates required field: `name`
-  - Ensures name uniqueness (409 Conflict if duplicate)
-  - Returns 201 Created with amenity data
-
-- **GET /api/v1/amenities/**: List all amenities
-  - Returns 200 OK with array of all amenities
-
-- **GET /api/v1/amenities/<amenity_id>**: Get amenity by ID
-  - Returns 200 OK with amenity data
-  - Returns 404 Not Found if amenity doesn't exist
-
-- **PUT /api/v1/amenities/<amenity_id>**: Update amenity information
-  - Validates updated name field
-  - Ensures name uniqueness if name is being updated
-  - Returns 200 OK with updated amenity data
-  - Returns 404 Not Found if amenity doesn't exist
-  - Returns 409 Conflict if name already exists
-
-**Error Handling**:
-- 400 Bad Request: Validation errors
-- 404 Not Found: Amenity not found
-- 409 Conflict: Duplicate name
-
-### Task 4: Place Endpoints
-
-**Objective**: Implement API endpoints for managing places with CRUD operations (Create, Read, Update). DELETE is not implemented for places. Handle relationships with User (owner) and Amenity entities.
-
-**Implementation**:
-
-- **POST /api/v1/places/**: Create a new place
-  - Validates required fields: `name`, `description`, `price`, `latitude`, `longitude`, `owner_id`
-  - Validates `owner_id` exists (404 if not found)
-  - Validates price >= 0, latitude [-90, 90], longitude [-180, 180]
-  - Optionally accepts `amenity_ids` array and validates all amenities exist
-  - Returns 201 Created with place data including expanded `owner` and `amenities` objects
-
-- **GET /api/v1/places/**: List all places
-  - Returns 200 OK with array of all places
-  - Each place includes expanded `owner` object and `amenities` array
-
-- **GET /api/v1/places/<place_id>**: Get place by ID
-  - Returns 200 OK with place data including expanded relationships
-  - Returns 404 Not Found if place doesn't exist
-
-- **PUT /api/v1/places/<place_id>**: Update place information
-  - Validates updated fields including price, latitude, longitude constraints
-  - Validates `owner_id` if being updated
-  - Can update `amenity_ids` list (validates all amenities exist)
-  - Returns 200 OK with updated place data including expanded relationships
-  - Returns 404 Not Found if place or related entities don't exist
-
-- **GET /api/v1/places/<place_id>/reviews**: Get all reviews for a place
-  - Returns 200 OK with array of reviews for the specified place
-  - Each review includes expanded `user` and `place` objects
-  - Returns 404 Not Found if place doesn't exist
-
-**Error Handling**:
-- 400 Bad Request: Validation errors (invalid price, latitude, longitude, etc.)
-- 404 Not Found: Place, owner, or amenity not found
-- 409 Conflict: Data conflicts
-
-### Task 5: Review Endpoints
-
-**Objective**: Implement API endpoints for managing reviews with full CRUD operations (Create, Read, Update, Delete). Reviews are the only entity with DELETE support in Part 2.
-
-**Implementation**:
-
-- **POST /api/v1/reviews/**: Create a new review
-  - Validates required fields: `text`, `rating`, `user_id`, `place_id`
-  - Validates `user_id` and `place_id` exist (404 if not found)
-  - Validates rating is between 1 and 5
-  - Automatically adds review to place's `review_ids` list
-  - Returns 201 Created with review data including expanded `user` and `place` objects
-
-- **GET /api/v1/reviews/**: List all reviews
-  - Returns 200 OK with array of all reviews
-  - Each review includes expanded `user` and `place` objects
-
-- **GET /api/v1/reviews/<review_id>**: Get review by ID
-  - Returns 200 OK with review data including expanded relationships
-  - Returns 404 Not Found if review doesn't exist
-
-- **PUT /api/v1/reviews/<review_id>**: Update review information
-  - Validates updated fields including rating constraints
-  - Validates `user_id` and `place_id` if being updated
-  - If `place_id` is changed, removes review from old place and adds to new place
-  - Returns 200 OK with updated review data including expanded relationships
-  - Returns 404 Not Found if review or related entities don't exist
-
-- **DELETE /api/v1/reviews/<review_id>**: Delete a review
-  - Removes review from place's `review_ids` list
-  - Deletes the review from repository
-  - Returns 200 OK with success message
-  - Returns 404 Not Found if review doesn't exist
-
-**Error Handling**:
-- 400 Bad Request: Validation errors (invalid rating, missing fields)
-- 404 Not Found: Review, user, or place not found
-- 409 Conflict: Data conflicts
-
-### Task 6: Testing and Validation
-
-**Objective**: Create comprehensive tests, implement validation logic, and document testing results.
-
-**Implementation**:
-
-- **Unit Tests** (`tests/test_business_logic.py`):
-  - Validator function tests (require_str, require_float, require_int, require_uuid_str)
-  - User model tests (creation, validation, updates)
-  - Amenity model tests (creation, validation, updates)
-  - Place model tests (creation, validation, relationships, coordinate validation)
-  - Review model tests (creation, validation, rating constraints)
-
-- **Facade Layer Tests** (`tests/test_facade.py`):
-  - User CRUD operations through facade
-  - Amenity CRUD operations through facade
-  - Place CRUD operations with relationship handling
-  - Review CRUD operations with relationship handling
-  - Error handling tests (ValidationError, NotFoundError, ConflictError)
-  - Relationship integrity tests (place-amenity, place-review, review-user-place)
-
-- **API Integration Tests** (`tests/test_api.py`):
-  - All HTTP endpoints tested (GET, POST, PUT, DELETE)
-  - Status code validation (200, 201, 400, 404, 409)
-  - Response format validation
-  - Error response validation
-  - Extended attributes validation (owner, amenities, user, place objects in responses)
-  - Edge cases and error scenarios
-
-**Test Results**:
-- All 109 tests pass successfully
+**Task 6: Testing and Validation**
+- Comprehensive unit tests (109 tests)
+- Facade layer tests
+- API integration tests
 - 100% endpoint coverage
-- Comprehensive error scenario coverage
-- Relationship integrity verified
 
-**Testing Tools**:
-- pytest for test execution
-- Flask test client for API integration tests
-- Isolated test fixtures to prevent side effects
+### Features
 
-**Documentation**:
-- `tests/README.md`: Complete testing documentation
-- Swagger/OpenAPI documentation auto-generated by Flask-RESTx at `/api/v1/`
-- All endpoints documented with request/response models
-
-### Part 2 Summary
-
-**Architecture**:
-- Clean separation of concerns across three layers
-- Facade pattern provides unified business logic interface
-- Repository pattern abstracts data access (ready for Part 3 database integration)
-
-**Features Implemented**:
-- Complete CRUD operations for Users, Amenities, Places, and Reviews
-- Full relationship management (User-Places, Place-Amenities, Place-Reviews, Review-User-Place)
-- Comprehensive input validation and error handling
+- Complete CRUD operations for all entities
+- Full relationship management
+- Comprehensive input validation
 - Extended response objects with nested relationships
-- In-memory persistence with unique field constraints
+- In-memory persistence with unique constraints
 
-**API Endpoints Summary**:
-- Users: 4 endpoints (POST, GET list, GET by id, PUT)
-- Amenities: 4 endpoints (POST, GET list, GET by id, PUT)
-- Places: 5 endpoints (POST, GET list, GET by id, PUT, GET reviews)
-- Reviews: 5 endpoints (POST, GET list, GET by id, PUT, DELETE)
+**Location**: `part2/` directory
 
-**Next Steps (Part 3)**:
-- Replace in-memory repository with SQLAlchemy database persistence
-- Implement database migrations
-- Add query filtering and pagination
-- Implement authentication and authorization
+---
+
+## Part 3: Authentication, Authorization, and Database Integration
+
+**Objective**: Transform the backend into a production-ready application with JWT authentication, role-based access control, and SQLAlchemy ORM.
+
+### Tasks Completed (0-10)
+
+**Task 0: Application Factory with Configuration**
+- Application Factory pattern implementation
+- Configuration classes (Development, Production, Testing)
+- Environment-based configuration
+
+**Task 1: Password Hashing**
+- Bcrypt password hashing in User model
+- Secure password storage
+- Passwords excluded from GET responses
+
+**Task 2: JWT Authentication**
+- Flask-JWT-Extended integration
+- Login endpoint with token generation
+- JWT tokens with user claims (is_admin)
+
+**Task 3: Authenticated User Access**
+- Protected endpoints requiring JWT
+- Ownership validation for places and reviews
+- Public endpoints remain accessible
+- Prevents users from reviewing own places
+
+**Task 4: Administrator Access**
+- Admin-only endpoints for user and amenity management
+- Administrators bypass ownership restrictions
+- Role-based access control
+
+**Task 5: SQLAlchemy Repository**
+- Repository pattern with SQLAlchemy
+- Replaces in-memory storage
+- Database abstraction layer
+
+**Task 6: Map User Entity to SQLAlchemy**
+- BaseModelDB with common attributes
+- User model mapped to database
+- UserRepository implementation
+
+**Task 7: Map Remaining Entities**
+- Place, Review, and Amenity models
+- All models inherit from BaseModelDB
+- Complete attribute mapping
+
+**Task 8: Map Relationships**
+- One-to-many: User -> Place, User -> Review, Place -> Review
+- Many-to-many: Place <-> Amenity (via place_amenity table)
+- Foreign keys and relationship() definitions
+- Backrefs for bidirectional access
+
+**Task 9: SQL Scripts**
+- schema.sql: Complete database schema
+- data.sql: Initial administrator user and amenities
+- test_queries.sql: CRUD verification queries
+
+**Task 10: Database Diagrams**
+- ER diagram using Mermaid.js
+- Visual representation of all entities and relationships
+- Documented in er_diagram.md
+
+### Database Schema
+
+**Entities**:
+- User: id, first_name, last_name, email, password, is_admin, created_at, updated_at
+- Place: id, name, description, price, latitude, longitude, owner_id, created_at, updated_at
+- Review: id, text, rating, user_id, place_id, created_at, updated_at
+- Amenity: id, name, created_at, updated_at
+- Place_Amenity: place_id, amenity_id (association table)
+
+**Relationships**:
+- User -> Place (One-to-Many via owner_id)
+- User -> Review (One-to-Many via user_id)
+- Place -> Review (One-to-Many via place_id)
+- Place <-> Amenity (Many-to-Many via place_amenity)
+
+### API Endpoints
+
+**Authentication**:
+- POST /api/v1/auth/register - Register new user
+- POST /api/v1/auth/login - Login and get JWT token
+
+**Users**:
+- GET /api/v1/users/ - List all users (public)
+- GET /api/v1/users/<id> - Get user by ID (public)
+- PUT /api/v1/users/<id> - Update user (authenticated, self or admin)
+
+**Places**:
+- POST /api/v1/places/ - Create place (authenticated)
+- GET /api/v1/places/ - List all places (public)
+- GET /api/v1/places/<id> - Get place by ID (public)
+- PUT /api/v1/places/<id> - Update place (authenticated, owner or admin)
+- DELETE /api/v1/places/<id> - Delete place (authenticated, owner or admin)
+
+**Reviews**:
+- POST /api/v1/reviews/ - Create review (authenticated)
+- GET /api/v1/reviews/ - List all reviews (public)
+- GET /api/v1/reviews/<id> - Get review by ID (public)
+- PUT /api/v1/reviews/<id> - Update review (authenticated, author or admin)
+- DELETE /api/v1/reviews/<id> - Delete review (authenticated, author or admin)
+
+**Amenities**:
+- GET /api/v1/amenities/ - List all amenities (public)
+- POST /api/v1/amenities/ - Create amenity (admin only)
+- PUT /api/v1/amenities/<id> - Update amenity (admin only)
+- DELETE /api/v1/amenities/<id> - Delete amenity (admin only)
+
+**Location**: `part3/` directory
+
+---
+
+## Part 4: Web Client (Frontend)
+
+**Objective**: Build a modern, responsive web client that connects to the Part 3 backend API.
+
+### Features
+
+**Authentication**:
+- User registration with form validation
+- Login with JWT token storage in cookies
+- Session management and authentication state checking
+- Admin badge and privileges display
+
+**Places Management**:
+- Grid view of all available places
+- Price filtering (10, 50, 100, All)
+- Place details page with comprehensive information
+- Responsive place cards with hover effects
+
+**Reviews System**:
+- View all reviews for a place with ratings
+- Add reviews (authenticated users only)
+- Owner protection (owners cannot review own places)
+- Star rating display
+
+**User Experience**:
+- Responsive design (mobile, tablet, desktop)
+- Modern UI with smooth animations
+- Error handling with user-friendly messages
+- Loading states and empty states
+
+### Pages
+
+1. **index.html** - Places listing with filtering
+2. **login.html** - User authentication
+3. **register.html** - New user registration
+4. **place.html** - Place details with reviews
+5. **add_review.html** - Add review form
+
+### Architecture
+
+**JavaScript Modules**:
+- utils.js - Core utilities, API requests, cookie management
+- auth.js - Authentication functions
+- places.js - Places loading and display
+- reviews.js - Reviews management
+- animations.js - UI animations
+
+**CSS Architecture**:
+- variables.css - CSS custom properties
+- base.css - Reset and typography
+- layout.css - Page structure
+- components.css - UI components
+- style.css - Main stylesheet
+
+**Location**: `part4/` directory
+
+---
+
+## Quick Start
+
+### Part 2 (In-Memory Backend)
+
+```bash
+cd part2
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python run.py
+```
+
+API available at: `http://localhost:5000`
+
+### Part 3 (Secure Backend with Database)
+
+```bash
+cd part3
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+Create `.env` file:
+```
+FLASK_ENV=development
+JWT_SECRET_KEY=your-secret-key-change-in-production
+SQLALCHEMY_DATABASE_URI=sqlite:///hbnb_dev.db
+```
+
+Run the application:
+```bash
+python run.py
+```
+
+API available at: `http://localhost:5000`
+
+### Part 4 (Web Client)
+
+**Prerequisites**: Part 3 backend must be running
+
+```bash
+cd part4
+python -m http.server 8000
+```
+
+Open browser: `http://localhost:8000`
+
+---
+
+## Technologies
+
+**Backend**:
+- Python 3.9+
+- Flask 3.0.0
+- Flask-RESTX 1.3.0
+- Flask-JWT-Extended 4.5.3
+- Flask-Bcrypt 4.1.1
+- Flask-SQLAlchemy 3.1.1
+- SQLite (development) / MySQL (production)
+
+**Frontend**:
+- HTML5
+- CSS3 (with CSS Custom Properties)
+- JavaScript ES6 (vanilla, no frameworks)
+- Fetch API
+
+**Testing**:
+- pytest
+- Flask test client
+
+---
+
+## Architecture Principles
+
+1. **Layered Architecture**: Clear separation between Presentation, Business Logic, and Persistence layers
+2. **Facade Pattern**: Unified interface for all business operations
+3. **Repository Pattern**: Abstraction of data access
+4. **RESTful API**: Standard HTTP methods and status codes
+5. **Security**: JWT authentication, password hashing, role-based access control
+6. **Database Design**: Proper relationships, foreign keys, and constraints
 
 ---
 
 ## Requirements
 
 ### Part 1 Requirements
-
 - Use UML notation for diagrams
 - Ensure separation of concerns between layers
-- Follow clean architecture style:
-  - Controllers are thin
-  - Business rules live in domain layer
-  - Persistence is accessed via repositories
+- Follow clean architecture style
 
 ### Part 2 Requirements
-
 - Follow Python best practices and PEP 8
 - Implement comprehensive error handling
 - Write tests for all business logic and API endpoints
 - Use Flask-RESTx for API documentation
 - Maintain clean code architecture
-- Ensure all endpoints return appropriate HTTP status codes
+
+### Part 3 Requirements
+- Implement JWT authentication
+- Secure endpoints with proper authorization
+- Use SQLAlchemy for database operations
+- Create SQL scripts for schema and initial data
+- Generate ER diagrams
+
+### Part 4 Requirements
+- Use semantic HTML5
+- Modern CSS with responsive design
+- Vanilla JavaScript (no frameworks)
+- Connect to Part 3 backend API
+- Implement all required functionality
+
+---
+
+## Documentation
+
+- **Part 1**: `part1/README.md` - UML diagrams and architecture
+- **Part 2**: `part2/README.md` - Implementation details and API documentation
+- **Part 3**: `part3/README.md` - Tasks 0-10 documentation
+- **Part 4**: `part4/README.md` - Frontend documentation and setup
+
+---
+
+## License
+
+This project is part of the Holberton School curriculum.
